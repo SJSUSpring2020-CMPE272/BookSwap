@@ -32,6 +32,7 @@ Machine Learning framework: TensorFlow
 Project Idea-3:
 
 Project Title: BookSwap App.
+# Approved
 
 Project Idea Description: A money free Barter System market place where people can share their books on "1-1" swap basis.  Create localized communities both public and private, where users can join(public) or request membership(private) and Exit at any time as long as there are no dues. Communities may be formed among students, colleagues, neighbors etc. who can meet at convenience at public places or comfortable enough to invite home. Users can upload the list of books they are willing to share and a list of books/genres  they are interested in. Using AI/ML, based on past “likes” the app will recommend you with people with books you may like. If both Swipe right, a chat room opens. Users can decide time and Space and can exchange books.  The app will contain remainders as set by the users to complete the returns. We can impose limits on how many books can be in swapped mode for a user at a given Time. Users rate each other upon completion of return based on maintenance of borrowed books and Filters can be set to optimize recommendations limiting to high rated users. 
  
