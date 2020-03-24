@@ -1,35 +1,9 @@
-Project Idea-1:
 
-Project Title: Crop produce prediction based on various conditions
-
-Project idea description: Based on temperature, weather conditions and soil moisture of particular location, the system will be able to suggest farmers which crop will be most beneficial to grow in those conditions. The farmer can focus all his resources to produce this crop and yield a lot of profit. Also, when the natural limitations are involved in deciding the crop, the land retains its fertility and is not exploited through means of artificial methods of harvest, to produce an undesirable crop. The farmer does not have to spend too much too, as natural means of harvesting are always less expensive than their counterpart. So this is a win-win situation!  Our system will be using Machine learning algorithm :Multiple linear regression to make predictions for farmers.
-
-Goal: Farmers and other agriculture enthusiasts, so that they can choose the crop carefully for their farm and this would mitigate the risk of less produce due to climatic and soil conditions.
-
-Technology stack:
-Web technologies: HTML, CSS, Java script
-Cloud: AWS EC2,Docker
-Machine Learning framework: TensorFlow 
- 
-Project Idea-2:
-
-Project Title:  Abusive remarks: Monitoring and removal.
-
-Project Idea Description:We are living in an era of Internet communication. The invention of mobiles has helped communication between 2 people very easy and fast. But with social platforms like Facebook, billions of people are reachable, with just one click. Before we take a moment to appreciate this, we need to think about the cons of this situation. How can we limit the possibility of being influenced by negative forces in the society, when everyone can express what they want on such platforms? Not everyone has a feeling of social responsibility. How can we exercise control over posts which carry hate speech, abusive language, threat/violence or anything which might seem unparliamentary? The idea for this project has evolved from this very context itself. This project is focused on placing this control over the posts and content on such social platforms and enhancing the user experience. 
-
-Goal:This project will help to reduce any inappropriate remarks and negative propaganda from the social platforms like Facebook and Twitter, all-in-all providing a better user environment.
-
-Technology Stack: 
-
-Dataset: Using Dataset Available on Kaggle
-Web technologies: HTML, CSS, Java script
-Cloud: AWS EC2,Docker
-Machine Learning framework: TensorFlow 
 
  
 
 
-Project Idea-3:
+Project Idea
 
 Project Title: BookSwap App.
 # Approved
