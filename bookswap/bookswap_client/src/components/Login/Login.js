@@ -3,6 +3,8 @@ import '../../App.css';
 import axios from 'axios';
 import cookie from 'react-cookies';
 import {Redirect} from 'react-router';
+import jwtDecode from 'jwt-decode';
+import api from '../../common/api';
 
 
 //Define a Login Component
@@ -15,6 +17,7 @@ class Login extends Component{
         this.state = {
             userEmail : "",
             password : "",
+            authFlag:false
           
         }
         //Bind the handlers to this class
@@ -59,7 +62,19 @@ class Login extends Component{
                     this.setState({
                         authFlag : true
                     })
-                }else{
+                    const token=response.data;
+                    api.setJwt(token);
+                    localStorage.setItem("token", token);
+                    const authToken = localStorage.getItem("token");
+            const jwt = authToken.split(" ")[1]
+            let user = jwtDecode(jwt);
+            if (user) {
+                localStorage.setItem("email_id", user.emailId);
+                localStorage.setItem("user_id", user.userId);
+                localStorage.setItem("user_name", user.name);
+                
+                }
+            }else{
                     this.setState({
                         authFlag : false
                     })
@@ -70,11 +85,13 @@ class Login extends Component{
     render(){
         //redirect based on successful login
         let redirectVar = null;
-        if(cookie.load('cookie')){
-            redirectVar = <Redirect to= "/home"/>
-        }
+        if (!localStorage.getItem("token")) {
+                redirectVar = <Redirect to="/login" />; 
+            }
+            else{
+                redirectVar = <Redirect to="/recommendation" />;
+            }
         return(
-          
        <div>
                 {redirectVar}
             <div class="container">
