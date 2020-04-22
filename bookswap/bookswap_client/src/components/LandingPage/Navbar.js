@@ -22,6 +22,7 @@ class Navbar extends Component {
             
             navLogin = (
                 <ul class="nav navbar-nav navbar-right">
+                    <li><Link to="/dashboard">Dashboard</Link></li>
                      <li><Link to="/recommendation">Recommendations</Link></li>
                         <li><Link to="/messages">Messages</Link></li>
                         <li><Link to="/profile"><span class="glyphicon glyphicon-user"></span>Profile</Link></li>
@@ -40,7 +41,7 @@ class Navbar extends Component {
         }
         let redirectVar = null;
         if(localStorage.getItem("token")){  
-            redirectVar = <Redirect to="/recommendation"/>
+            redirectVar = <Redirect to="/dashboard"/>
         }
         else{
             redirectVar = <Redirect to="/home"/>

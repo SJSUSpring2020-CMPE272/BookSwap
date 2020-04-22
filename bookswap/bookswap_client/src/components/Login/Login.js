@@ -5,6 +5,7 @@ import cookie from 'react-cookies';
 import {Redirect} from 'react-router';
 import jwtDecode from 'jwt-decode';
 import api from '../../common/api';
+import {backendURI} from '../../common/config';
 
 
 //Define a Login Component
@@ -55,7 +56,7 @@ class Login extends Component{
         //set the with credentials to true
         //axios.defaults.withCredentials = true;
         //make a post request with the user data
-        axios.post('http://localhost:3001/login',data)
+        axios.post(backendURI +'/login',data)
             .then(response => {
                 console.log("Status Code : ",response.status);
                 if(response.status === 200){
@@ -70,7 +71,7 @@ class Login extends Component{
             let user = jwtDecode(jwt);
             if (user) {
                 localStorage.setItem("email_id", user.emailId);
-                localStorage.setItem("user_id", user.userId);
+                localStorage.setItem("user_id", user._id);
                 localStorage.setItem("user_name", user.name);
                 
                 }
@@ -89,7 +90,7 @@ class Login extends Component{
                 redirectVar = <Redirect to="/login" />; 
             }
             else{
-                redirectVar = <Redirect to="/recommendation" />;
+                redirectVar = <Redirect to="/dashboard" />;
             }
         return(
        <div>

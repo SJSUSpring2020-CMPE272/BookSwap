@@ -45,6 +45,7 @@ class Aboutus extends Component {
                 <div class="container">
                     <div class="center">
   <h1 style={{"text-align": "center"}}>Book Swap</h1>
+  <h2 style={{"text-align": "center"}}>How to start swapping books</h2>
   <br></br>
   </div>
   <div class="row">

@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import '../../App.css';
 import axios from 'axios';
-
+import {backendURI} from '../../common/config';
 import {Redirect} from 'react-router';
 
 
@@ -57,7 +57,7 @@ class Signup extends Component{
         //set the with credentials to true
        //axios.defaults.withCredentials = true;
         //make a post request with the user data
-        axios.post('http://localhost:3001/signup',data)
+        axios.post(backendURI+'/signup',data)
             .then(response => {
                 console.log("Status Code : ",response.status);
                 if(response.status === 200){
@@ -76,8 +76,6 @@ class Signup extends Component{
     render(){
         //redirect based on successful login
         let redirectVar = null;
-      
-       
         return(
             <div>
                 {redirectVar}
