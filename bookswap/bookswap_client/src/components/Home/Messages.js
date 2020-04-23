@@ -154,12 +154,6 @@ messageContentHandler=(e)=>
         let all;
        all=[...this.state.sender,...this.state.receiver];
        console.log("all"+JSON.stringify(all));
-       
-
-       
-      
-                             
-        
 
         return (
           <div>

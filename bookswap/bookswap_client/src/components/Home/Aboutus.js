@@ -26,9 +26,6 @@ class Aboutus extends Component {
             index : e.target.value
         })
     }
-        
-    
-      
     render(){
         //iterate over books to create a table row
       

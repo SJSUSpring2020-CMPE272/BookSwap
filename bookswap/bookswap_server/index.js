@@ -5,11 +5,13 @@
   const signup = require("./routes/signup");
   const profile = require("./routes/profile");
   const book = require("./routes/book");
+  const messages = require("./routes/messages");
 
   app.use("/login", login);
   app.use("/signup", signup);
   app.use("/profile", profile);
   app.use("/book", book);
+  app.use("/messages", messages);
   
   
   app.listen(3001, () => {

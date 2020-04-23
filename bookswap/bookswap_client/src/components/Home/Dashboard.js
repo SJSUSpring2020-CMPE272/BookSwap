@@ -10,7 +10,7 @@ import dummy from '../../common/dummy.png';
 import bookdummy from '../../common/books.png';
 import {backendURI} from '../../common/config';
 import Modal from 'react-modal';
-import { Button } from 'react-bootstrap';
+import { Button, Form} from "react-bootstrap";
 
 import { CarouselProvider, Slider, Slide } from 'pure-react-carousel';
 import 'pure-react-carousel/dist/react-carousel.es.css';
@@ -20,9 +20,11 @@ class Dashboard extends Component {
         super();
         this.state = {  
             allBookDetails : [],
-            bookIsOpen:false
+            bookIsOpen:false,
+            openMessage:false
         }
         this.closeModal = this.closeModal.bind(this);
+        this.cancelModal = this.cancelModal.bind(this);
     }  
     componentWillMount() {
       this.getSwapBookAllUsers();
@@ -32,6 +34,48 @@ class Dashboard extends Component {
         bookIsOpen: false
     });
 }
+cancelModal() {
+    this.setState({
+        openMessage:false
+    });
+}
+openMessageModal(book) {
+    this.setState({
+        openMessage:true,
+        receiverid:book.bookOwnerId,
+        receivername:book.bookOwnerName
+    });
+}
+submitMessage=()=>
+{
+    let data = {
+        senderid:localStorage.getItem("user_id"),
+        sname:localStorage.getItem("user_name"),
+        receiverid:this.state.receiverid,
+        receivername:this.state.receivername,
+        content:this.state.message
+    }
+axios.post(backendURI +'/messages/',data)
+    .then(response => {
+        console.log("Status Code : ",response.status,response.data);
+        if(response.status === 200){
+            alert("Message sent");
+            this.getSwapBookAllUsers();
+        }
+    })
+    .catch(err => { 
+        this.setState({errorMessage:"Message could no be sent"});
+    });
+    this.setState({
+        openMessage : false
+    })
+}
+messageContentHandler=(e)=>
+    {
+        this.setState({
+            message : e.target.value
+        })
+    }
   getSwapBookAllUsers =()=>
   {
     let userId=localStorage.getItem("user_id");
@@ -115,7 +159,6 @@ class Dashboard extends Component {
                    
                   
                 </div>
-             
                 <input type="text" class="form-control" name="search" placeholder="Book Name or Author Name or ISBN Number" onChange={this.studentCriteria}/>
                 <div style={{display: "flex",justifyContent: "center",alignItems: "center"}}>
                     <button class="btn btn-primary" type="button" onClick={this.searchStudent}><span class="glyphicon glyphicon-search"></span>Search</button>
@@ -153,6 +196,28 @@ class Dashboard extends Component {
                             </div>
                             </div>
                         </div>
+                        </Modal>
+                        <Modal
+                            isOpen={this.state.openMessage}
+                            onRequestClose={this.cancelModal}
+                             contentLabel="Example Modal" >
+                                 
+                               
+                <div class="panel panel-default">
+                    <div class="panel-heading">To: {this.state.receivername} </div> 
+                </div>
+                <Form  >
+                        <Form.Control as="textarea" rows="3" name="input_message" placeholder="Type your message..." onChange={this.messageContentHandler} pattern="^[A-Za-z0-9 ,.-]+$" required />
+                        <br />
+                    </Form>
+                         <center>
+                         <Button variant="primary" onClick={this.submitMessage}>
+                                    <b>Send Message</b>
+                                </Button>{" "}
+                                <Button variant="primary" onClick={this.cancelModal}>
+                                    <b>Cancel</b>
+                                </Button> 
+                            </center>
                         </Modal>
  </div>
            
