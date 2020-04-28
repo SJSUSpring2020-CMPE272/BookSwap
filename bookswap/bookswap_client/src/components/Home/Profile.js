@@ -232,8 +232,7 @@ handleCategoryChange =(e)=>{
                    <div class="panel-footer text-right">
                <button type="button" id="profileEdit" class="btn btn-primary btn-block pull-right" onClick={this.handleEdit}>Edit Basic Details</button>
                <button type="button" id="swapBookAdd" class="btn btn-primary btn-block pull-right" onClick={this.handleSwapAdd}>Add Books you want to Swap</button>
-               {/* <button type="button" id="educationAdd" class="btn btn-primary btn-block pull-right" onClick={this.handleEducationAdd}>Add Interests</button>
-               <button type="button" id="educationAdd" class="btn btn-primary btn-block pull-right" onClick={this.handleEducationAdd}>Add Favourite books</button> */}
+              
                   </div>
                   
                   {this.state.swapBookDetails.map(swapBook =>
@@ -359,12 +358,21 @@ handleCategoryChange =(e)=>{
         <span className="input-group-text" id="basic-addon1"><b>Genre</b></span>
     </div>
     <select value={this.state.categoryValue} onChange={this.handleCategoryChange}  className="form-control" aria-label="category" aria-describedby="basic-addon1"  required >
-    <option value="Romance">Romance</option>
-    <option value="Mystery">Mystery</option>
-    <option value="Fantasy and science fiction">Fantasy and science fiction</option>
-    <option value="Thrillers and horror">Thrillers and horror</option>
-    <option value="Young adult">Young adult</option>
-    <option value="Children fiction">Children’s fiction</option>
+    <option value="romance">Romance</option>
+    <option value="mystery">Mystery</option>
+    <option value="fantasy">Fantasy</option>
+    <option value="fiction">Fiction</option>
+    <option value="thriller">Thriller</option>
+    <option value="horror">Horror</option>
+    <option value="humor">Humor</option>
+    <option value="classics">Classics</option>
+    <option value="adult">Adult</option>
+    <option value="historical">Historical</option>
+    <option value="paranormal">Paranormal</option>
+    <option value="contemporary">Contemporary</option>
+    <option value="chick-lit">Chick-lit</option>
+    <option value="young-adult">Young adult</option>
+    <option value="childrens">Children's</option>
     <option value="Inspirational, self-help, and religious books">Inspirational, self-help, and religious books</option>
     <option value="Biography, autobiography, and memoir">Biography, autobiography, and memoir</option>
     <option value="Technology">Technology</option>

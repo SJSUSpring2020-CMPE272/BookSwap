@@ -60,9 +60,7 @@ class Login extends Component{
             .then(response => {
                 console.log("Status Code : ",response.status);
                 if(response.status === 200){
-                    this.setState({
-                        authFlag : true
-                    })
+                    
                     const token=response.data;
                     api.setJwt(token);
                     localStorage.setItem("token", token);
@@ -73,13 +71,13 @@ class Login extends Component{
                 localStorage.setItem("email_id", user.emailId);
                 localStorage.setItem("user_id", user._id);
                 localStorage.setItem("user_name", user.name);
-                
+                this.setState({
+                    authFlag : true
+                })
                 }
-            }else{
-                    this.setState({
-                        authFlag : false
-                    })
-                }
+            }
+            }) .catch(err => { 
+                this.setState({errorMessage: err.response.data});
             });
     }
 
@@ -87,11 +85,16 @@ class Login extends Component{
         //redirect based on successful login
         let redirectVar = null;
         if (!localStorage.getItem("token")) {
-                redirectVar = <Redirect to="/login" />; 
-            }
-            else{
-                redirectVar = <Redirect to="/dashboard" />;
-            }
+            redirectVar = <Redirect to="/login" />; 
+        }
+        else{
+            redirectVar = <Redirect to="/dashboard" />;
+        }
+        if(this.state.authFlag)
+        {
+            redirectVar = <Redirect to="/dashboard" />; 
+
+        }
         return(
        <div>
                 {redirectVar}

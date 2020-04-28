@@ -26,7 +26,7 @@ class Dashboard extends Component {
         this.closeModal = this.closeModal.bind(this);
         this.cancelModal = this.cancelModal.bind(this);
     }  
-    componentWillMount() {
+    componentDidMount() {
       this.getSwapBookAllUsers();
   }
   closeModal() {

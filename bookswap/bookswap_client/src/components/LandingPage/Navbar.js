@@ -44,7 +44,7 @@ class Navbar extends Component {
             redirectVar = <Redirect to="/dashboard"/>
         }
         else{
-            redirectVar = <Redirect to="/home"/>
+            redirectVar = <Redirect to="/aboutus"/>
         }
         return(
             <div>
