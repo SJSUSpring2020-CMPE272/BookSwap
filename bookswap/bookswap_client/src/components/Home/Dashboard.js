@@ -21,13 +21,16 @@ class Dashboard extends Component {
         this.state = {  
             allBookDetails : [],
             bookIsOpen:false,
-            openMessage:false
+            openMessage:false,
+            pageIndex:1,
+            searchString:'',
+            books:[]
         }
         this.closeModal = this.closeModal.bind(this);
         this.cancelModal = this.cancelModal.bind(this);
     }  
     componentDidMount() {
-      this.getSwapBookAllUsers();
+      this.searchBook();
   }
   closeModal() {
     this.setState({
@@ -64,7 +67,7 @@ axios.post(backendURI +'/messages/',data)
         }
     })
     .catch(err => { 
-        this.setState({errorMessage:"Message could no be sent"});
+        this.setState({errorMessage:"Message could not be sent"});
     });
     this.setState({
         openMessage : false
@@ -108,6 +111,57 @@ messageContentHandler=(e)=>
         isbnNumber:book.isbnNumber        
     });
 }
+bookCriteria=(e)=>
+{
+    this.setState({
+        searchString : e.target.value,
+        pageIndex:1
+    })
+}
+pageCountInc=async()=>{
+    console.log(this.state.allBookDetails.length);
+    if((this.state.allBookDetails.length)==5)
+    {
+   await this.setState({
+    
+        pageIndex:this.state.pageIndex+1 
+        
+    })
+}
+this.searchBook();
+}
+pageCountDec=async()=>{
+    if(this.state.pageIndex>1)
+    {
+    await this.setState({
+        pageIndex:this.state.pageIndex-1 
+    }) 
+}
+this.searchBook();
+}
+searchBook=()=>
+{
+    let userId=localStorage.getItem("user_id");
+    let data = {
+        searchString:this.state.searchString ,
+        pageIndex:this.state.pageIndex,
+        userId : userId
+    }
+    axios.post(backendURI +'/book/searchBook',data)
+    .then(response => {
+        console.log("Status Code : ",response.status);
+        if(response.status === 200){
+            let allBookDetails=response.data;
+            console.log(JSON.stringify(allBookDetails))
+            this.setState({
+                allBookDetails   
+            }); 
+        }
+    })
+    .catch(err => { 
+        this.setState({errorMessage:"Books cannot be viewed"});
+    });
+}
     
     render(){
         //iterate over books to create a table row
@@ -138,9 +192,22 @@ messageContentHandler=(e)=>
                     )
                   }
                      </tbody>
+                    
                 </table>
-            
-                </div>)
+                <div style={{display: "flex",justifyContent: "center",alignItems: "center"}}>
+            <nav aria-label="Page navigation example">
+  <ul className="pagination justify-content-center">
+    <li class="page-item">
+      <a class="page-link" href="#" onClick={() => this.pageCountDec()} tabIndex="-1">Previous</a>
+    </li>
+                <li class="page-item"><a class="page-link" href="#">{this.state.pageIndex}</a></li>
+    <li class="page-item">
+      <a class="page-link" href="#" onClick={() => this.pageCountInc()}>Next</a>
+    </li>
+  </ul>
+</nav>
+</div>
+</div>)
        
         return (
             <div>
@@ -159,9 +226,9 @@ messageContentHandler=(e)=>
                    
                   
                 </div>
-                <input type="text" class="form-control" name="search" placeholder="Book Name or Author Name or ISBN Number" onChange={this.studentCriteria}/>
+                <input type="text" class="form-control" name="search" placeholder="Book Name or Author Name" onChange={this.bookCriteria}/>
                 <div style={{display: "flex",justifyContent: "center",alignItems: "center"}}>
-                    <button class="btn btn-primary" type="button" onClick={this.searchStudent}><span class="glyphicon glyphicon-search"></span>Search</button>
+                    <button class="btn btn-primary" type="button" onClick={this.searchBook}><span class="glyphicon glyphicon-search"></span>Search</button>
                 </div>
             </div>
         </div>

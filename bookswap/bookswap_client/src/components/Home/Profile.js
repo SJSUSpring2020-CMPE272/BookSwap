@@ -351,7 +351,7 @@ handleCategoryChange =(e)=>{
                                 <div className="input-group-prepend">
                                     <span className="input-group-text" id="basic-addon1"><b>Isbn Number</b></span>
                                 </div>
-                                <input type="text" size="50" name="isbnnumber" className="form-control" aria-label="ISBN" aria-describedby="basic-addon1" onChange={this.isbnChange} />
+                                <input type="number" size="50" name="isbnnumber" className="form-control" aria-label="ISBN" aria-describedby="basic-addon1" onChange={this.isbnChange} title="Only numbers"/>
                             </div>
                             <div className="input-group mb-2">
     <div className="input-group-prepend">
