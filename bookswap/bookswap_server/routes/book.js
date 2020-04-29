@@ -124,4 +124,40 @@ else{
 
 }
   })
+
+  router.get("/getAvailableBook", async (req, res) => {
+    
+    Books.find({}, (err, books) => {
+      if (err) {
+       res.status = 500;
+        res.message = "Database Error";
+     }
+     if (!books) {
+       res.status = 401;
+       res.message = "No such book exists";
+     }
+     else {
+    let payload = JSON.stringify(books);
+    res.status(200).end(payload);   
+               }
+    }).limit(3)
+    })
+
+    router.post("/removeSwapBook", async (req, res) => {
+    console.log("reached remove"+JSON.stringify(req.body))
+      Books.findByIdAndDelete(req.body.bookId, (err)=>{
+
+        if(err)
+        {
+          res.status = 500;
+          res.message = "Database Error";
+         console.log("reached error"+err)
+        }
+        
+          //console.log(successFlag)
+        res.status = 200;
+        res.message = "Deleted Book";
+        
+      })
+  })
 module.exports = router;

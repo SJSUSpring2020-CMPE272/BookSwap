@@ -106,6 +106,10 @@ class Login extends Component{
                         <div class="panel">
                             <h2>Book Swap</h2>
                             <p>Please enter your email address and password</p>
+                            <div style={{float: "left", color: "red"}} >
+                    { this.state.errorMessage &&
+                                <h5 className="error">Error: { this.state.errorMessage} </h5> }
+                                </div>
                         </div>
                         
                             <div class="form-group">

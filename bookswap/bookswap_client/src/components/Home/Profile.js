@@ -9,9 +9,6 @@ import {backendURI} from '../../common/config';
 import Modal from 'react-modal';
 import { Button } from 'react-bootstrap';
 
-
-
-
 class Profile extends Component {
     constructor(props) {
         super(props);
@@ -188,7 +185,32 @@ handleCategoryChange =(e)=>{
   })
 
 }
-  
+  handleDeletion=async(swapBook)=>
+  {
+   await this.setState({
+        bookId: swapBook._id
+    });
+    const data = {
+        bookId:this.state.bookId
+    }
+    console.log("data going to book"+JSON.stringify(data));
+    //set the with credentials to true
+    axios.defaults.withCredentials = true;
+    axios.post(backendURI +'/book/removeSwapBook',data)
+    .then(response => {
+    if (response.status === 200) {
+        this.setState({
+            removeBook:true
+        });
+    }
+    
+}
+)
+.catch(err => { 
+    this.setState({errorMessage: "error"});
+})
+await this.getSwapBook();
+  }
     
   
 
@@ -236,9 +258,10 @@ handleCategoryChange =(e)=>{
                   </div>
                   
                   {this.state.swapBookDetails.map(swapBook =>
+                  <div key={swapBook._id}>
                     <div class="panel panel-default">
                     <div class="panel-heading">Added Book Details</div>
-                    <div key={swapBook._id}>
+                    
                     <div className="card" style={{width: 15 +"rem"}}>
                           <img className="card-img-top" src={swapBook.imageUrl||bookImage} alt="" />
                           </div>   
@@ -248,6 +271,9 @@ handleCategoryChange =(e)=>{
                     <div class="panel-body">ISBN Number: {swapBook.isbnNumber}</div>
                     <div class="panel-body">Description: {swapBook.bookDescription}</div>
                     </div>
+                    <div class="panel-footer">
+                    <button type="button" id="swapBookDel" class="btn btn-primary btn-danger pull-right" onClick={() =>this.handleDeletion(swapBook)}>Remove</button>
+                  </div>
                   </div>
                     )
                   }
@@ -351,7 +377,7 @@ handleCategoryChange =(e)=>{
                                 <div className="input-group-prepend">
                                     <span className="input-group-text" id="basic-addon1"><b>Isbn Number</b></span>
                                 </div>
-                                <input type="number" size="50" name="isbnnumber" className="form-control" aria-label="ISBN" aria-describedby="basic-addon1" onChange={this.isbnChange} title="Only numbers"/>
+                                <input type="text" size="50" name="isbnnumber" className="form-control" aria-label="ISBN" aria-describedby="basic-addon1" onChange={this.isbnChange} title="No hyphens" required/>
                             </div>
                             <div className="input-group mb-2">
     <div className="input-group-prepend">

@@ -6,19 +6,38 @@ import {Redirect} from 'react-router';
 import book1 from '../../common/book1.jpg';
 import book2 from '../../common/book2.jpg';
 import book3 from '../../common/book3.jpg';
-
-import { CarouselProvider, Slider, Slide } from 'pure-react-carousel';
-import 'pure-react-carousel/dist/react-carousel.es.css';
-
+import {backendURI} from '../../common/config';
+import bookdummy from '../../common/books.png';
 class Home extends Component {
     constructor(){
         super();
         this.state = {  
-            books : []
+            bookDetails : []
         }
     }  
+    componentWillMount() {
+      this.getAvailableBooks();
+  }
     //get the books data from backend  
-    
+    getAvailableBooks =()=>
+  {
+      axios.get(backendURI +'/book/getAvailableBook')
+      .then(response => {
+          console.log("Status Code : ",response.status);
+          if(response.status === 200){
+              let bookDetails=response.data;
+              
+              console.log(JSON.stringify(bookDetails))
+              this.setState({
+                  bookDetails   
+              });
+              
+          }
+      })
+      .catch(err => { 
+          this.setState({errorMessage:"Books cannot be viewed"});
+      });
+  }
     render(){
         //iterate over books to create a table row
       
@@ -37,37 +56,19 @@ class Home extends Component {
         
         <div class="card-group">
         <div class="row">
-        <div class="col col-lg-4">
+        {this.state.bookDetails.map(book =>
+        <div class="col col-lg-4"  key={book._id}>
   <div class="card">
-    <img class="card-img-top" src={book1} alt="Card image cap"/>
+    <img class="card-img-top" src={book.imageUrl||bookdummy} alt="Card image cap"/>
     <div class="card-body">
-      <h5 class="card-title">Book 1</h5>
-      <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-      <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+        <h5 class="card-title">{book.bookName}</h5>
+        <p class="card-text">{book.bookDescription}</p>
     </div>
   </div>
+      
   </div>
-  <div class="col col-lg-4">
-  <div class="card">
-    <img class="card-img-top" src={book2} alt="Card image cap"/>
-    <div class="card-body">
-      <h5 class="card-title">Book 2</h5>
-      <p class="card-text">This card has supporting text below as a natural lead-in to additional content.</p>
-      <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
-    </div>
-    </div>
-    </div>
-
-    <div class="col col-lg-4">
-  <div class="card">
-    <img class="card-img-top" src={book3} alt="Card image cap"/>
-    <div class="card-body">
-      <h5 class="card-title">Book 3</h5>
-      <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This card has even longer content than the first to show that equal height action.</p>
-      <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
-    </div>
-    </div>
-    </div>
+   ) }
+ 
   </div>
 </div>
   </div>
