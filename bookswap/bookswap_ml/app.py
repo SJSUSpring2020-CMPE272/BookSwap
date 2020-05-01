@@ -78,7 +78,7 @@ def split_dataframe(df, holdout_fraction=0.1):
 def build_rating_sparse_tensor(ratings_df):
   """
   Args:
-    ratings_df: a pd.DataFrame with `user_id`, `movie_id` and `rating` columns.
+    ratings_df: a pd.DataFrame with `user_id`, `book_id` and `rating` columns.
   Returns:
     a tf.SparseTensor representing the ratings matrix.
   """
@@ -96,8 +96,8 @@ def sparse_mean_square_error(sparse_ratings, user_embeddings, book_embeddings):
     sparse_ratings: A SparseTensor rating matrix, of dense_shape [N, M]
     user_embeddings: A dense Tensor U of shape [N, k] where k is the embedding
       dimension, such that U_i is the embedding of user i.
-    movie_embeddings: A dense Tensor V of shape [M, k] where k is the embedding
-      dimension, such that V_j is the embedding of movie j.
+    book_embeddings: A dense Tensor V of shape [M, k] where k is the embedding
+      dimension, such that V_j is the embedding of book j.
   Returns:
     A scalar Tensor representing the MSE between the true ratings and the
       model's predictions.
@@ -200,7 +200,7 @@ def build_regularized_model(
     init_stddev=0.1):
   """
   Args:
-    ratings: the DataFrame of movie ratings.
+    ratings: the DataFrame of book ratings.
     embedding_dim: The dimension of the embedding space.
     regularization_coeff: The regularization coefficient lambda.
     gravity_coeff: The gravity regularization coefficient lambda_g.
@@ -278,13 +278,13 @@ def user_recommendations(model, measure=DOT, exclude_rated=False, k=6):
         'genres': books['all_genres'],
     })
     if exclude_rated:
-      # remove movies that are already rated
+      # remove books that are already rated
       rated_books = ratings[ratings.user_id == "53424"]["book_id"].values
       df = df[df.book_id.apply(lambda book_id: book_id not in rated_books)]
     display.display(df.sort_values([score_key], ascending=False).head(k))  
 
 def book_neighbors(model, title_substring, measure=DOT, k=6):
-  # Search for movie ids that match the given substring.
+  # Search for book ids that match the given substring.
   ids =  books[books['title'].str.contains(title_substring)].index.values
   titles = books.iloc[ids]['title'].values
   if len(titles) == 0:

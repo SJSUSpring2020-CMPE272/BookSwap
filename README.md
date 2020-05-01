@@ -15,9 +15,10 @@ Goal/Intended clients: Provide a safe a convenient and safe marketspace or all p
 
 #### Technology Stack:     
 Front end: Html5+ Css, Javascript and ReactJS   
-Backend : Python,NodeJS   
+Backend : Python,NodeJS, Flask   
 Databases: MongoDB   
-Deployment:Amazon EC2 Instance 
+Deployment:Amazon EC2 Instance    
+Machine Learning: Tensorflow   
 
 #### Architecture Diagram:   
    
