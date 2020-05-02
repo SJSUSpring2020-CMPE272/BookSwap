@@ -22,7 +22,7 @@ Machine Learning: Tensorflow
 
 #### Architecture Diagram:   
    
-![Architecture Diagram](./Diagrams/Architecture%20diagram.jpeg)    
+![Architecture Diagram](./Diagrams/Architecture%20diagram.jpg)    
    
 #### Flow Diagram:     
    
