@@ -26,6 +26,6 @@ Machine Learning: Tensorflow
    
 #### Flow Diagram:     
    
-![Block Diagram](./Diagrams/BookSwap_ProcessFlow.png) 
+![Block Diagram](./Diagrams/BookSwap_ProcessFlow.jpg) 
                            
 
