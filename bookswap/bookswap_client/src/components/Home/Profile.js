@@ -226,13 +226,14 @@ await this.getSwapBook();
           <div className="row mt-3">
                 <div className="col-sm-4">
                     <div className="card" style={{width: 15 +"rem"}}>
-                        <img className="card-img-top" src={userImage} alt="" />
-                        <button type="button" id="picEdit" className="btn btn-primary btn-block btn-xs pull-right" onClick={this.handleImageEdit}>Edit Profile Picture</button>
+                       
+                        
                         <div className="text-center">
                         <div className="card-body">
                         <div class="panel panel-default">
-                 
+                        <div class="panel-heading">Welcome to Book Swap</div>
                   <div class="panel-body">{this.state.user_profile.name}</div>
+                  <div class="panel-body">Start Adding books you want to swap</div>
                   </div>
                      </div>
                     </div>

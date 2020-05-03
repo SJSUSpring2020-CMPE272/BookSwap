@@ -76,6 +76,10 @@ class Signup extends Component{
     render(){
         //redirect based on successful login
         let redirectVar = null;
+        if(this.state.successFlag)
+        {
+            redirectVar = <Redirect to="/login" />;  
+        }
         return(
             <div>
                 {redirectVar}
