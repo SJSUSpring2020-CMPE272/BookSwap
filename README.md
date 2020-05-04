@@ -3,11 +3,13 @@
  
 
 
-## Project Idea
+## BookSwap
 
-### Project Title: BookSwap App.
-# Approved
+### Project Idea  
+BookSwap application provides its users with a simple platform where they can share and borrow books with other bibliophiles like them. BookSwap is a web application which facilitates users to swap books and provide a flexibility to the users to contact and discuss the place and time of swap.
 
+
+### Abstract
 Project Idea Description: A money free Barter System market place where people can share their books on "1-1" swap basis.   Users can upload the list of books they are willing to share or swap and a list of books/genres  they are interested in. Using ML, based on user's interest the app will recommend you books you may like and also if the book is available in system for swapping. Users can decide time and Space and can exchange books in the message window.All user conversations can be seen in message tab.User can search for books using bookname and author name in dashboard page and see list of all available books.
 User can view book details as mentioned by book owner and also owner of the book and send message to book owner if interested.
       
