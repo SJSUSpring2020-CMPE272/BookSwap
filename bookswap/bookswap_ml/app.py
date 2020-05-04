@@ -81,7 +81,6 @@ def calculate_mean_error(sparse_ratings, user_embeddings, book_embeddings):
   return loss
 
 class Collab_Filter_Model(object):
-  """Simple class that represents a collaborative filtering model"""
   def __init__(self, embedding_vars, loss, metrics=None):
     
     self.embedding_vars = embedding_vars
@@ -92,7 +91,6 @@ class Collab_Filter_Model(object):
 
   @property
   def embeddings(self):
-    """The embeddings dictionary."""
     return self._embeddings
         
 
@@ -136,94 +134,73 @@ class Collab_Filter_Model(object):
       return results
 
 
-def gravity(U, V):
-  """Creates a gravity loss given two embedding matrices."""
-  return 1. / (U.shape[0].value*V.shape[0].value) * tf.reduce_sum(
-      tf.matmul(U, U, transpose_a=True) * tf.matmul(V, V, transpose_a=True))
+def create_gravity_loss(col_u, col_v):
+  return 1. / (col_u.shape[0].value*col_v.shape[0].value) * tf.reduce_sum(
+      tf.matmul(col_u, col_u, transpose_a=True) * tf.matmul(col_v, col_v, transpose_a=True))
 
-def build_regularized_model(
-    ratings, embedding_dim=3, regularization_coeff=.1, gravity_coeff=1.,
-    init_stddev=0.1):
+def create_reglr_model(
+    ratings, embed_dimension=3, regn_coeffient=.1, grav_coefficient=1.,
+    standard_dev=0.1):
   
   train_ratings, test_ratings = divide_train_test(ratings)
   
-  # SparseTensor representation of the train and test datasets.
-  A_train = get_matrix_from_ratings(train_ratings)
-  A_test = get_matrix_from_ratings(test_ratings)
-  U = tf.Variable(tf.random_normal(
-      [A_train.dense_shape[0], embedding_dim], stddev=init_stddev))
-  V = tf.Variable(tf.random_normal(
-      [A_train.dense_shape[1], embedding_dim], stddev=init_stddev))
+  train_sample = get_matrix_from_ratings(train_ratings)
+  test_sample = get_matrix_from_ratings(test_ratings)
+  col_u = tf.Variable(tf.random_normal(
+      [train_sample.dense_shape[0], embed_dimension], stddev=standard_dev))
+  col_v = tf.Variable(tf.random_normal(
+      [train_sample.dense_shape[1], embed_dimension], stddev=standard_dev))
 
-  error_train = calculate_mean_error(A_train, U, V)
-  error_test = calculate_mean_error(A_test, U, V)
-  gravity_loss = gravity_coeff * gravity(U, V)
-  regularization_loss = regularization_coeff * (
-      tf.reduce_sum(U*U)/U.shape[0].value + tf.reduce_sum(V*V)/V.shape[0].value)
-  total_loss = error_train + regularization_loss + gravity_loss
+  trn_error = calculate_mean_error(train_sample, col_u, col_v)
+  tst_error = calculate_mean_error(test_sample, col_u, col_v)
+  gr_loss = grav_coefficient * create_gravity_loss(col_u, col_v)
+  reglrn_loss = regn_coeffient * (
+      tf.reduce_sum(col_u*col_u)/col_u.shape[0].value + tf.reduce_sum(col_v*col_v)/col_v.shape[0].value)
+  tot_loss = trn_error + reglrn_loss + gr_loss
   losses = {
-      'train_error_observed': error_train,
-      'test_error_observed': error_test,
+      'train_error_observed': trn_error,
+      'test_error_observed': tst_error,
   }
   loss_components = {
-      'observed_loss': error_train,
-      'regularization_loss': regularization_loss,
-      'gravity_loss': gravity_loss,
+      'observed_loss': trn_error,
+      'regularization_loss': reglrn_loss,
+      'gravity_loss': gr_loss,
   }
-  embeddings = {"user_id": U, "book_id": V}
-  print(total_loss)
+  embeddings = {"user_id": col_u, "book_id": col_v}
+  print(tot_loss)
   print(losses)
   print(loss_components)
 
-  return Collab_Filter_Model(embeddings, total_loss, [losses, loss_components])
+  return Collab_Filter_Model(embeddings, tot_loss, [losses, loss_components])
 
 
-reg_model = build_regularized_model(
-    ratings, regularization_coeff=0.1, gravity_coeff=1.0, embedding_dim=35,
-    init_stddev=.05)
-reg_model.train_data(number_of_iterations=2000, lr=20.)
+my_regular_model = create_reglr_model(
+    ratings, regn_coeffient=0.1, grav_coefficient=1.0, embed_dimension=35,
+    standard_dev=.05)
+my_regular_model.train_data(number_of_iterations=2000, lr=20.)
 
 DOT = 'dot'
 COSINE = 'cosine'
-def compute_scores(query_embedding, item_embeddings, measure=DOT):
+def compute_scores(query_embedding, item_embedding, measure_method=DOT):
   
-  u = query_embedding
-  V = item_embeddings
-  if measure == COSINE:
-    V = V / np.linalg.norm(V, axis=1, keepdims=True)
-    u = u / np.linalg.norm(u)
-  scores = u.dot(V.T)
+  query_u = query_embedding
+  item_v = item_embedding
+  if measure_method == COSINE:
+    item_v = item_v / np.linalg.norm(item_v, axis=1, keepdims=True)
+    query_u = query_u / np.linalg.norm(query_u)
+  scores = query_u.dot(item_v.T)
   return scores
 
-def user_recommendations(model, measure=DOT, exclude_rated=False, k=6):
-  if False:
-    scores = compute_scores(
-        model.embeddings["user_id"][53424], model.embeddings["book_id"], measure)
-    score_key = measure + ' score'
-    df = pd.DataFrame({
-        score_key: list(scores),
-        'book_id': books['book_id'],
-        'titles': books['title'],
-        'genres': books['all_genres'],
-    })
-    if exclude_rated:
-      # remove books that are already rated
-      rated_books = ratings[ratings.user_id == "53424"]["book_id"].values
-      df = df[df.book_id.apply(lambda book_id: book_id not in rated_books)]
-    display.display(df.sort_values([score_key], ascending=False).head(k))  
+def get_book_predictions(model, substring_of_bookname, measure_method=DOT, k=10):
+ 
+  substring_of_bookname = substring_of_bookname.lower()
+  substring_of_bookname = ''.join(e for e in substring_of_bookname if e.isalnum())
 
-
-def book_neighbors(model, title_substring, measure=DOT, k=10):
-  # Search for book ids that match the given substring.
-
-  title_substring = title_substring.lower()
-  title_substring = ''.join(e for e in title_substring if e.isalnum())
-
-  temp = books['edited_title'].str.contains(title_substring)
+  temp = books['edited_title'].str.contains(substring_of_bookname)
   ids =  books[temp].index.values
   titles = books.iloc[ids]['title'].values
   if len(titles) == 0:
-    raise ValueError("Found no books with title %s" % title_substring)
+    raise ValueError("Found no books with title %s" % substring_of_bookname)
   print("Nearest neighbors of : %s." % titles[0])
   if len(titles) > 1:
     print("[Found more than one matching book. Other candidates: {}]".format(
@@ -231,23 +208,16 @@ def book_neighbors(model, title_substring, measure=DOT, k=10):
   book_id = ids[0]
   scores = compute_scores(
       model.embeddings["book_id"][book_id], model.embeddings["book_id"],
-      measure)
-  score_key = measure + ' score'
+      measure_method)
+  calculated_score = measure_method + ' score'
   df = pd.DataFrame({
-      score_key: list(scores),
+      calculated_score: list(scores),
       'titles': books['title'],
       'genres': books['all_genres'],
       'image_url': books['img_url']
   })
-  display.display(df.sort_values([score_key], ascending=False).head(k))
-  return (df.sort_values([score_key], ascending=False).head(k))
-
-
-user_recommendations(reg_model, DOT, exclude_rated=True, k=10)
-
-# book_neighbors(reg_model, "Harry Potter", DOT)
-# book_neighbors(reg_model, "Harry Potter", COSINE)
-
+  display.display(df.sort_values([calculated_score], ascending=False).head(k))
+  return (df.sort_values([calculated_score], ascending=False).head(k))
 
 
 @app.route('/')
@@ -258,20 +228,7 @@ def hello():
 
 @app.route('/predictions/<string:bookname>', methods=["GET"])
 def getPredictions(bookname):
-  # print("Rquesting recomendation for: " + bookname)
-  # bookname = bookname.lower()
-  # if not (bookname.isalnum()):
-  #   bookname = ''.join(e for e in bookname if e.isalnum())
-  # print("Bookname after formatting: " + bookname)
-
-  # df = books[books['edited_title'].astype(str).str.contains(bookname)]
-  # if df.empty == True:
-  #   new_dict ={}
-  #   new_dict['title'] = "No book in dataset"
-  #   return jsonify(new_dict)
-
-  # print("Found matching book with name: " + df.iloc[0]['title'])
-  pred1 = book_neighbors(reg_model, bookname, COSINE)
-  pred2 = book_neighbors(reg_model, bookname, DOT)
+  pred1 = get_book_predictions(my_regular_model, bookname, COSINE)
+  pred2 = get_book_predictions(my_regular_model, bookname, DOT)
 
   return (pred1.to_json(orient='index'))
