@@ -16,6 +16,10 @@ class Signup extends Component{
             userEmail : "",
             password : "",
             name :"",
+            address:"",
+            city:"",
+            stateName:"",
+            zipcode:"",
             errorMessage : "",
             successFlag :false
         }
@@ -40,7 +44,34 @@ class Signup extends Component{
             name : e.target.value
         })
     }
-   
+
+    //name change handler to update state variable with the text entered by the user
+    addressChangeHandler = (e) => {
+        this.setState({
+            address : e.target.value
+        })
+    }
+    
+    //name change handler to update state variable with the text entered by the user
+    zipcodeChangeHandler = (e) => {
+        this.setState({
+            zipcode : e.target.value
+        })
+    }
+
+    //name change handler to update state variable with the text entered by the user
+    stateNameChangeHandler = (e) => {
+        this.setState({
+            stateName : e.target.value
+        })
+    }
+
+    //name change handler to update state variable with the text entered by the user
+    cityChangeHandler = (e) => {
+        this.setState({
+            city : e.target.value
+        })
+    }
 
     
     //submit Login handler to send a request to the node backend
@@ -52,6 +83,10 @@ class Signup extends Component{
             userEmail : this.state.userEmail,
             password : this.state.password,
             name : this.state.name,
+            address: this.state.address,
+            city: this.state.city,
+            stateName: this.state.stateName,
+            zipcode: this.state.zipcode
         }
         console.log(data);
         //set the with credentials to true
@@ -111,6 +146,22 @@ class Signup extends Component{
                             <div className="form-group">
                             <label htmlFor="password"> Create Password:</label>
                                 <input onChange = {this.passwordChangeHandler}  type="password" className="form-control" name="password" placeholder="Password" required />
+                            </div>
+                            <div className="form-group">
+                            <label htmlFor="address"> Enter address:</label>
+                                <input onChange = {this.addressChangeHandler}  type="text" className="form-control" name="Address" placeholder="Address" required />
+                            </div>
+                            <div className="form-group">
+                            <label htmlFor="city"> Enter City:</label>
+                                <input onChange = {this.cityChangeHandler}  type="text" className="form-control" name="city" placeholder="City" required />
+                            </div>
+                            <div className="form-group">
+                            <label htmlFor="stateName"> State:</label>
+                                <input onChange = {this.stateNameChangeHandler}  type="text" className="form-control" name="stateName" placeholder="CA" required />
+                            </div>
+                            <div className="form-group">
+                            <label htmlFor="zipcode"> Enter Zipcode:</label>
+                                <input onChange = {this.zipcodeChangeHandler}  type="text" className="form-control" name="zipcode" placeholder="ZipCode" required />
                             </div>
                             <button type ="submit"  className="btn btn-primary">Sign Up</button>   
                             </form>              
