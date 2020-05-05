@@ -5,11 +5,14 @@ var usersSchema = new Schema({
     name: {type: String, required: true},
     password: {type: String, required: true},
     emailId:{type:String,required:true},
+    address:{type:String,required:true},
+    city:{type:String,required:true},
+    stateName:{type:String,required:true},
+    zipcode:{type:String,required:true},
+    country:{type:String,required:false},
     aboutme:{type:String,required:false},
     contactNumber:{type:String,required:false},
-    city:{type:String,required:false},
-    state:{type:String,required:false},
-    country:{type:String,required:false},
+    
     image:{type:String,required:false},
    
 },

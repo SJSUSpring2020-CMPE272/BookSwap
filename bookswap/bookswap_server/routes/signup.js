@@ -11,8 +11,13 @@ var newUser = new Users({
     emailId: req.body.userEmail,
     password: req.body.password,
     name: req.body.name,
+    address: req.body.address,
+    city: req.body.city,
+    stateName:req.body.stateName,
+    zipcode: req.body.zipcode
     
   });
+  console.log(newUser)
   Users.findOne({ emailId: req.body.userEmail}, (err, user) => {
     if (err) {
       res.status(500).end("System Error");
