@@ -26,7 +26,8 @@ Users.findOne({ _id: req.body.userId}, (err, user) => {
               aboutme:user.aboutme,
               contactNumber:user.contactNumber,
               city:user.city,
-              state:user.state,
+              stateName:user.stateName,
+              zipcode:user.zipcode,
               country:user.country,
               image:user.image,
               
@@ -56,7 +57,8 @@ Users.findOne({ _id: req.body.userId}, (err, user) => {
                aboutme:req.body.userAboutMe,
                contactNumber:req.body.userContactNumber,
                city:req.body.userCity,
-               state:req.body.userState,
+               stateName:req.body.userStateName,
+               zipcode:req.body.userZipcode,
                country:req.body.userCountry
            },
            {

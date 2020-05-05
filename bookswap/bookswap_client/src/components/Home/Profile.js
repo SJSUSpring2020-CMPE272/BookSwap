@@ -78,7 +78,8 @@ class Profile extends Component {
                   userAboutMe:this.state.userAboutMe||this.state.user_profile.aboutMe,
                   userContactNumber:this.state.userContactNumber||this.state.user_profile.contactNumber,
                   userCity:this.state.userCity||this.state.user_profile.city,
-                  userState:this.state.userState||this.state.user_profile.state,
+                  userStateName:this.state.userState||this.state.user_profile.stateName,
+                  userZipcode:this.state.userZipcode||this.state.user_profile.zipcode,
                   userCountry:this.state.userCountry||this.state.user_profile.country
     
               }
@@ -149,9 +150,15 @@ class Profile extends Component {
           userCity: e.target.value
       });
   };
-  stateChange = (e) => {
+
+  zipcodeChange = (e) => {
+    this.setState({
+        userZipcode: e.target.value
+    });
+};
+  stateNameChange = (e) => {
       this.setState({
-          userState: e.target.value
+          userStateName: e.target.value
       });
   };
   countryChange = (e) => {
@@ -248,7 +255,8 @@ await this.getSwapBook();
                   <div class="panel-body">{this.state.user_profile.aboutme}</div>
                   <div class="panel-body">{this.state.user_profile.contactNumber}</div>
                   <div class="panel-body">{this.state.user_profile.city}</div>
-                  <div class="panel-body">{this.state.user_profile.state}</div>
+                  <div class="panel-body">{this.state.user_profile.stateName}</div>
+                  <div class="panel-body">{this.state.user_profile.zipcode}</div>
                   <div class="panel-body">{this.state.user_profile.country}</div>
 
               </div>
@@ -329,8 +337,16 @@ await this.getSwapBook();
                                 <div className="input-group-prepend">
                                     <span className="input-group-text" id="basic-addon1"><b>State</b></span>
                                 </div>
-                                <input type="text"size="50" name="state" className="form-control" aria-label="State" aria-describedby="basic-addon1" onChange={this.stateChange} defaultValue={this.state.user_profile.state}  pattern=".*\S.*" />
+                                <input type="text"size="50" name="stateName" className="form-control" aria-label="State" aria-describedby="basic-addon1" onChange={this.stateNameChange} defaultValue={this.state.user_profile.stateName}  pattern=".*\S.*" />
                             </div>
+
+                            <div className="input-group mb-2">
+                                <div className="input-group-prepend">
+                                    <span className="input-group-text" id="basic-addon1"><b>ZipCode</b></span>
+                                </div>
+                                <input type="text"size="50" name="zipcode" className="form-control" aria-label="zipcode" aria-describedby="basic-addon1" onChange={this.zipcodeChange} defaultValue={this.state.user_profile.zipcode}  pattern=".*\S.*" />
+                            </div>
+
                             <div className="input-group mb-2">
                                 <div className="input-group-prepend">
                                     <span className="input-group-text" id="basic-addon1"><b>Country</b></span>
