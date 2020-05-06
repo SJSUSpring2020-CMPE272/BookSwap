@@ -110,7 +110,8 @@ class Profile extends Component {
             authorName:this.state.authorName,
             description:this.state.swapBookDescription,
             isbnNumber:this.state.isbnNumber,
-            category:this.state.categoryValue
+            category:this.state.categoryValue,
+            location:{latitude:localStorage.getItem("userLat"),longitude:localStorage.getItem("userLon")}
         }
         console.log("data going to book"+JSON.stringify(data));
         //set the with credentials to true

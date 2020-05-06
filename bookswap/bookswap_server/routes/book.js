@@ -22,7 +22,8 @@ var newBook = new Books({
     isbnNumber:req.body.isbnNumber,
     bookDescription:req.body.description,
     imageUrl:imageUrl,
-    genre:req.body.category
+    genre:req.body.category,
+    location:req.body.location
 });
     
   
@@ -112,7 +113,7 @@ else{
    }
    else {
      let filteredBooks;
-     console.log("SEARCH"+req.body.searchString)
+     console.log("SEARCH : "+req.body.searchString)
     const startIndex=(req.body.pageIndex-1)*5;
     const endIndex=req.body.pageIndex*5;
   filteredBooks = books.filter(book => book.bookOwnerId!=req.body.userId && (book.bookName.toLowerCase().includes(req.body.searchString.toLowerCase())||book.authorName.toLowerCase().includes(req.body.searchString.toLowerCase()))).slice(startIndex,endIndex);

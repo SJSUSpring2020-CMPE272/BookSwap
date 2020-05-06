@@ -10,7 +10,8 @@ var bookSchema = new Schema({
     isbnNumber:{type:String,required:false},
     imageUrl:{type:String,required:false},
     bookDescription:{type:String,required:false},
-    genre:{type: String, required: true}
+    genre:{type: String, required: true},
+    location: {type: JSON, required: false}
 },
 {
     versionKey: false
