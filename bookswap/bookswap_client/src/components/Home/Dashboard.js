@@ -15,6 +15,13 @@ import { Button, Form} from "react-bootstrap";
 import { CarouselProvider, Slider, Slide } from 'pure-react-carousel';
 import 'pure-react-carousel/dist/react-carousel.es.css';
 
+import TextField from '@material-ui/core/TextField';
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import InputLabel from '@material-ui/core/InputLabel';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+
+
 class Dashboard extends Component {
     constructor(){
         super();
@@ -24,19 +31,68 @@ class Dashboard extends Component {
             openMessage:false,
             pageIndex:1,
             searchString:'',
-            books:[]
+            books:[],
+            booksList:[],
+            categories:[],
+            categorisedBooks: [],
+            unCategorisedBooks: [],
+            authorsList: [],
+            dropdownList: [],
+            selectedOption: 'book'
         }
         this.closeModal = this.closeModal.bind(this);
         this.cancelModal = this.cancelModal.bind(this);
+        this.getBooksList = this.getBooksList.bind(this);
     }  
     componentDidMount() {
-      this.searchBook();
+      this.searchBook(null);
+      this.getBooksList();
   }
   closeModal() {
     this.setState({
         bookIsOpen: false
     });
 }
+
+getBooksList = () => {
+    let userId=localStorage.getItem("user_id");
+    const data={userId : userId}
+      axios.post(backendURI +'/book/getSwapBookAllUsers',data)
+      .then(response => {
+          if(response.status === 200){
+              let allBookDetails=response.data;
+              let books = [];
+              let categories = [];
+              let authors = [];
+              allBookDetails.forEach(detail => {
+                    if(!books.includes(detail.authorName)){
+                        books.push({title:detail.bookName});
+                    }
+                    if(!categories.includes(detail.genre)){
+                        categories.push(detail.genre);
+                    }
+                    if(!authors.includes(detail.authorName)){
+                        authors.push({title:detail.authorName});
+                    }
+              });
+              this.setState({
+                booksList: books,
+                categories: categories,
+                categorisedBooks: allBookDetails,
+                unCategorisedBooks: allBookDetails,
+                authorsList: authors,
+                dropdownList: books
+            });
+              
+          }
+      })
+      .catch(err => { 
+          this.setState({errorMessage:"Students cannot be viewed"});
+      });
+};
+
+
+
 cancelModal() {
     this.setState({
         openMessage:false
@@ -60,7 +116,6 @@ submitMessage=()=>
     }
 axios.post(backendURI +'/messages/',data)
     .then(response => {
-        console.log("Status Code : ",response.status,response.data);
         if(response.status === 200){
             alert("Message sent");
             this.getSwapBookAllUsers();
@@ -85,11 +140,9 @@ messageContentHandler=(e)=>
     const data={userId : userId}
       axios.post(backendURI +'/book/getSwapBookAllUsers',data)
       .then(response => {
-          console.log("Status Code : ",response.status);
           if(response.status === 200){
               let allBookDetails=response.data;
               
-              console.log(JSON.stringify(allBookDetails))
               this.setState({
                   allBookDetails   
               });
@@ -99,7 +152,61 @@ messageContentHandler=(e)=>
       .catch(err => { 
           this.setState({errorMessage:"Students cannot be viewed"});
       });
-  }
+  };
+
+  selectCategory = (event) => {
+    let allBookDetails = [];
+    let books = [];
+    let authors = [];
+    if(event.target.value === ''){
+        allBookDetails = this.state.unCategorisedBooks
+    }
+    else{
+        allBookDetails = this.state.unCategorisedBooks.filter(allBookDetail => allBookDetail.genre == event.target.value);
+    }
+    allBookDetails.forEach(detail => {
+        if(!books.includes(detail.authorName)){
+            books.push({title:detail.bookName});
+        }
+        
+        if(!authors.includes(detail.authorName)){
+            authors.push({title:detail.authorName});
+        }
+    });
+    let options = [];
+    if(this.state.selectedOption === 'book'){
+        options = books;
+    }
+    else{
+        options = authors;
+    }
+    this.setState({
+        searchString: event.target.value,
+        pageIndex:1,
+        booksList: books,
+        authorsList: authors,
+        dropdownList: options,
+        searchString: event.target.value
+    });
+    this.searchBook(event.target.value);
+  };
+
+  handleOptionChange = (changeEvent) =>{
+    let options = [];
+
+    if(changeEvent.target.value === 'book'){
+        options = this.state.booksList;
+    }
+    else{
+        options = this.state.authorsList;
+    }
+
+    this.setState({
+        selectedOption: changeEvent.target.value,
+        dropdownList: options
+      });
+  };
+
   openBookModal(book) {
     this.setState({
         bookIsOpen: true,
@@ -113,13 +220,18 @@ messageContentHandler=(e)=>
 }
 bookCriteria=(e)=>
 {
+    if(e == null){
+        e = '';
+    }
+    else{
+        e = e.title;
+    }
     this.setState({
-        searchString : e.target.value,
+        searchString : e,
         pageIndex:1
     })
 }
 pageCountInc=async()=>{
-    console.log(this.state.allBookDetails.length);
     if((this.state.allBookDetails.length)==5)
     {
    await this.setState({
@@ -128,7 +240,7 @@ pageCountInc=async()=>{
         
     })
 }
-this.searchBook();
+this.searchBook(null);
 }
 pageCountDec=async()=>{
     if(this.state.pageIndex>1)
@@ -137,22 +249,25 @@ pageCountDec=async()=>{
         pageIndex:this.state.pageIndex-1 
     }) 
 }
-this.searchBook();
+this.searchBook(null);
 }
-searchBook=()=>
+searchBook=(searchString)=>
 {
+    if(searchString == null){
+        searchString = this.state.searchString;
+    }
+    
     let userId=localStorage.getItem("user_id");
     let data = {
-        searchString:this.state.searchString ,
+        searchString: searchString,
         pageIndex:this.state.pageIndex,
         userId : userId
     }
+    console.log(data);
     axios.post(backendURI +'/book/searchBook',data)
     .then(response => {
-        console.log("Status Code : ",response.status);
         if(response.status === 200){
             let allBookDetails=response.data;
-            console.log(JSON.stringify(allBookDetails))
             this.setState({
                 allBookDetails   
             }); 
@@ -211,82 +326,112 @@ searchBook=()=>
        
         return (
             <div>
-            {redirectVar}
-            
-            <div className="container">
-                    
-                        <div className="main-div">
-                            <div className="panel">
-                                <h2>Book Search</h2>
-                                  
-    <div class="row">    
-        <div class="col-xs-8 col-xs-offset-2">
-		    <div>
-                <div class="input-group-btn search-panel">
-                   
-                  
-                </div>
-                <input type="text" class="form-control" name="search" placeholder="Book Name or Author Name" onChange={this.bookCriteria}/>
-                <div style={{display: "flex",justifyContent: "center",alignItems: "center"}}>
-                    <button class="btn btn-primary" type="button" onClick={this.searchBook}><span class="glyphicon glyphicon-search"></span>Search</button>
-                </div>
-            </div>
-        </div>
-	</div>
-    
-</div>
-</div>
-{booklist}
+                {redirectVar}
+
+                <div className="container">
+
+                    <div className="main-div">
+                        <div className="panel">
+                            <h3 style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>Book Search</h3>
+
+                            <div class="row">
+                                <div class="col-xs-8 col-xs-offset-2">
+                                    <div>
+                                        <div class="input-group-btn search-panel">
 
 
-
- </div>
- <Modal
-                            isOpen={this.state.bookIsOpen}
-                            onRequestClose={this.closeModal}
-                             contentLabel="Example Modal" >
-                           <div>             
-                            <div class="container">
-                            <div class="panel panel-default">
-                            <div class="panel-heading">Book Details </div>
-                            <div class="panel-heading">Book Name: {this.state.bookTitle}</div>
-                            <div class="panel-body">Author Name: {this.state.authorName}</div>
-                            <div class="panel-body">Genre: {this.state.genre}</div>
-                            <div class="panel-body">Book Owner: {this.state.bookOwnerName}</div>
-                            <div class="panel-body">Additional Details: {this.state.bookDescription}</div>
-                            <div class="panel-body">ISBN Number: {this.state.isbnNumber}</div>
-                            <center> 
-                                <Button variant="primary" onClick={this.closeModal}>
-                                    <b>Close</b>
-                                </Button>
-                            </center>
+                                        </div>
+                                        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", padding: "0px 0px 10px 0px" }}>
+                                            <label style={{ padding: "0px 10px 0px 0px"}}><input type="radio" value="book" checked={this.state.selectedOption === 'book'} onChange={this.handleOptionChange} /> Book</label>
+                                            
+                                            <label><input type="radio" value="author" checked={this.state.selectedOption === 'author'} onChange={this.handleOptionChange}/> Author</label>
+                                        </div>
+                                        <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                                            <FormControl variant="outlined" style={{ padding: "0px 10px 0px 0px", width: 150 }}>
+                                                <InputLabel htmlFor="outlined-age-native-simple">Category</InputLabel>
+                                                <Select
+                                                    native
+                                                    value={this.state.selectedCategory}
+                                                    onChange={this.selectCategory}
+                                                    label="Category"
+                                                    inputProps={{
+                                                        name: 'category',
+                                                        id: 'outlined-age-native-simple',
+                                                    }}
+                                                >
+                                                    <option aria-label="None" value=""></option>
+                                                    {this.state.categories.map((key, index) => { return <option value={key}>{key}</option> })}
+                                                </Select>
+                                            </FormControl>
+                                            <Autocomplete id="combo-box-demo"
+                                                options={this.state.dropdownList}
+                                                name="search"
+                                                onChange={(event, newValue) => this.bookCriteria(newValue)}
+                                                getOptionLabel={(option) => option.title}
+                                                style={{ width: 300 }}
+                                                renderInput={(params) => <TextField {...params} label="Book Name or Author Name" variant="outlined"/>}
+                                            />
+                                        </div>
+                                        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", padding: "10px 0px 0px 0px" }}>
+                                            <button class="btn btn-primary" type="button" onClick={() => this.searchBook(null)}><span class="glyphicon glyphicon-search"></span>Search</button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
+
+                        </div>
+                    </div>
+                    {booklist}
+
+
+
+                </div>
+                <Modal
+                    isOpen={this.state.bookIsOpen}
+                    onRequestClose={this.closeModal}
+                    contentLabel="Example Modal" >
+                    <div>
+                        <div class="container">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">Book Details </div>
+                                <div class="panel-heading">Book Name: {this.state.bookTitle}</div>
+                                <div class="panel-body">Author Name: {this.state.authorName}</div>
+                                <div class="panel-body">Genre: {this.state.genre}</div>
+                                <div class="panel-body">Book Owner: {this.state.bookOwnerName}</div>
+                                <div class="panel-body">Additional Details: {this.state.bookDescription}</div>
+                                <div class="panel-body">ISBN Number: {this.state.isbnNumber}</div>
+                                <center>
+                                    <Button variant="primary" onClick={this.closeModal}>
+                                        <b>Close</b>
+                                    </Button>
+                                </center>
                             </div>
                         </div>
-                        </Modal>
-                        <Modal
-                            isOpen={this.state.openMessage}
-                            onRequestClose={this.cancelModal}
-                             contentLabel="Example Modal" >
-                                 
-                               
-                <div class="panel panel-default">
-                    <div class="panel-heading">To: {this.state.receivername} </div> 
-                </div>
-                <Form  >
+                    </div>
+                </Modal>
+                <Modal
+                    isOpen={this.state.openMessage}
+                    onRequestClose={this.cancelModal}
+                    contentLabel="Example Modal" >
+
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading">To: {this.state.receivername} </div>
+                    </div>
+                    <Form  >
                         <Form.Control as="textarea" rows="3" name="input_message" placeholder="Type your message..." onChange={this.messageContentHandler} pattern="^[A-Za-z0-9 ,.-]+$" required />
                         <br />
                     </Form>
-                         <center>
-                         <Button variant="primary" onClick={this.submitMessage}>
-                                    <b>Send Message</b>
-                                </Button>{" "}
-                                <Button variant="primary" onClick={this.cancelModal}>
-                                    <b>Cancel</b>
-                                </Button> 
-                            </center>
-                        </Modal>
- </div>
+                    <center>
+                        <Button variant="primary" onClick={this.submitMessage}>
+                            <b>Send Message</b>
+                        </Button>{" "}
+                        <Button variant="primary" onClick={this.cancelModal}>
+                            <b>Cancel</b>
+                        </Button>
+                    </center>
+                </Modal>
+            </div>
            
     )
     }
