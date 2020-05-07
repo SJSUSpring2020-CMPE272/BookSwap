@@ -348,7 +348,7 @@ searchBook=(searchString)=>
                                         </div>
                                         <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                                             <FormControl variant="outlined" style={{ padding: "0px 10px 0px 0px", width: 150 }}>
-                                                <InputLabel htmlFor="outlined-age-native-simple">Category</InputLabel>
+                                                <InputLabel htmlFor="outlined-age-native-simple" style={{ zIndex: '0' }}>Category</InputLabel>
                                                 <Select
                                                     native
                                                     value={this.state.selectedCategory}
@@ -369,7 +369,7 @@ searchBook=(searchString)=>
                                                 onChange={(event, newValue) => this.bookCriteria(newValue)}
                                                 getOptionLabel={(option) => option.title}
                                                 style={{ width: 300 }}
-                                                renderInput={(params) => <TextField {...params} label="Book Name or Author Name" variant="outlined"/>}
+                                                renderInput={(params) => <TextField {...params} label="Book Name or Author Name" variant="outlined" style={{ zIndex: '0' }}/>}
                                             />
                                         </div>
                                         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", padding: "10px 0px 0px 0px" }}>

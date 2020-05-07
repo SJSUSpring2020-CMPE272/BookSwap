@@ -10,6 +10,7 @@ class App extends Component {
       //Use Browser Router to route to different pages
       <BrowserRouter>
         <div>
+          <h1 style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>Welcome to BookSwap</h1>
           {/* App Component Has a Child Component called Main*/}
           <Main/>
         </div>
