@@ -5,6 +5,7 @@ import {Redirect} from 'react-router';
 import Modal from 'react-modal';
 import { Button, Form} from "react-bootstrap";
 import {backendURI} from '../../common/config';
+import BookGrid from './BookGrid'
 
 class Messages extends Component {
     constructor(props) {

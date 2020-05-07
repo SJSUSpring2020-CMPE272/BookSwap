@@ -11,7 +11,10 @@ var bookSchema = new Schema({
     imageUrl:{type:String,required:false},
     bookDescription:{type:String,required:false},
     genre:{type: String, required: true},
-    location: {type: JSON, required: false}
+    location: {type: JSON, required: false},
+    swappedWithId: {type: String, required: false},
+    swappedWithName: {type: String, required: false},
+    swappedWithEmail: {type: String, required: false}
 },
 {
     versionKey: false

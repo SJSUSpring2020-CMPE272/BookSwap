@@ -6,12 +6,14 @@
   const profile = require("./routes/profile");
   const book = require("./routes/book");
   const messages = require("./routes/messages");
+  const transaction = require("./routes/transaction");
 
   app.use("/login", login);
   app.use("/signup", signup);
   app.use("/profile", profile);
   app.use("/book", book);
   app.use("/messages", messages);
+  app.use("/transaction", transaction);
   
   
   app.listen(3001, () => {

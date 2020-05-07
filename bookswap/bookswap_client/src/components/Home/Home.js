@@ -14,6 +14,7 @@ class Home extends Component {
         this.state = {  
             bookDetails : []
         }
+        this.submitLogin = this.submitLogin.bind(this);
     }  
     componentWillMount() {
       this.getAvailableBooks();
@@ -38,6 +39,34 @@ class Home extends Component {
           this.setState({errorMessage:"Books cannot be viewed"});
       });
   }
+
+  submitLogin=()=>
+   {
+       let data = {
+            transactionKey : "transactionKey",
+            user1 : "user1",
+            book1: "book1",
+            user2: "user2",
+            book2: "book2",
+            state: "state",
+            timestamp: "timeStamp"
+        }
+
+        console.log("Clicked test");
+
+   axios.post(backendURI +'/transaction/',data)
+       .then(response => {
+           console.log("Status Code : ",response.status,response.data);
+           if(response.status === 200){
+               alert("Transactino sent"); 
+           }
+       })
+       .catch(err => { 
+           this.setState({errorMessage:"Message could no be sent"});
+       });
+      
+   } 
+
     render(){
         //iterate over books to create a table row
       
@@ -53,6 +82,7 @@ class Home extends Component {
         <div class="container">
             <div class="center">
         <h2>Some Books Available:</h2>
+        <button onClick = {() => this.submitLogin()} class="btn btn-primary">Test</button>
         
         <div class="card-group">
         <div class="row">
