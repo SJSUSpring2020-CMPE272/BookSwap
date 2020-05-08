@@ -6,7 +6,7 @@ const Users = require('../models/users');
 
 //Route to handle Post Request Call
 router.post("/", async (req, res) => {
-console.log("reached sugnup")
+console.log("reached signup")
 var newUser = new Users({
     emailId: req.body.userEmail,
     password: req.body.password,

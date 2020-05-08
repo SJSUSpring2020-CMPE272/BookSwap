@@ -71,6 +71,9 @@
   
   object-fit: cover;
 }
+.card-group{
+  display: flex
+}
 .input-group>.input-group-prepend {
   flex: 0 0 25%;
 }
@@ -128,4 +131,10 @@ border-bottom-left-radius: 4px;
 }
 .back{
   background-image: url(./common/collection.png);
+}
+.center {
+      
+  margin: 0 auto;
+  font-family: "Comic Sans MS", cursive, sans-serif;
+  
 }

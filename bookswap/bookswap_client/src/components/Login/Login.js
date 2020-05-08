@@ -3,6 +3,9 @@ import '../../App.css';
 import axios from 'axios';
 import cookie from 'react-cookies';
 import {Redirect} from 'react-router';
+import jwtDecode from 'jwt-decode';
+import api from '../../common/api';
+import {backendURI} from '../../common/config';
 
 
 //Define a Login Component
@@ -15,6 +18,7 @@ class Login extends Component{
         this.state = {
             userEmail : "",
             password : "",
+            authFlag:false
           
         }
         //Bind the handlers to this class
@@ -52,29 +56,46 @@ class Login extends Component{
         //set the with credentials to true
         //axios.defaults.withCredentials = true;
         //make a post request with the user data
-        axios.post('http://localhost:3001/login',data)
+        axios.post(backendURI +'/login',data)
             .then(response => {
                 console.log("Status Code : ",response.status);
                 if(response.status === 200){
-                    this.setState({
-                        authFlag : true
-                    })
-                }else{
-                    this.setState({
-                        authFlag : false
-                    })
+                    
+                    const token=response.data;
+                    api.setJwt(token);
+                    localStorage.setItem("token", token);
+                    const authToken = localStorage.getItem("token");
+            const jwt = authToken.split(" ")[1]
+            let user = jwtDecode(jwt);
+            if (user) {
+                localStorage.setItem("email_id", user.emailId);
+                localStorage.setItem("user_id", user._id);
+                localStorage.setItem("user_name", user.name);
+                this.setState({
+                    authFlag : true
+                })
                 }
+            }
+            }) .catch(err => { 
+                this.setState({errorMessage: err.response.data});
             });
     }
 
     render(){
         //redirect based on successful login
         let redirectVar = null;
-        if(cookie.load('cookie')){
-            redirectVar = <Redirect to= "/home"/>
+        if (!localStorage.getItem("token")) {
+            redirectVar = <Redirect to="/login" />; 
+        }
+        else{
+            redirectVar = <Redirect to="/dashboard" />;
+        }
+        if(this.state.authFlag)
+        {
+            redirectVar = <Redirect to="/dashboard" />; 
+
         }
         return(
-          
        <div>
                 {redirectVar}
             <div class="container">
@@ -85,6 +106,10 @@ class Login extends Component{
                         <div class="panel">
                             <h2>Book Swap</h2>
                             <p>Please enter your email address and password</p>
+                            <div style={{float: "left", color: "red"}} >
+                    { this.state.errorMessage &&
+                                <h5 className="error">Error: { this.state.errorMessage} </h5> }
+                                </div>
                         </div>
                         
                             <div class="form-group">
