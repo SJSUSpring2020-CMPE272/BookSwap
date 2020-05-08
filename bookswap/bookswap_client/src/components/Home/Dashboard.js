@@ -102,7 +102,13 @@ openMessageModal(book) {
     this.setState({
         openMessage:true,
         receiverid:book.bookOwnerId,
-        receivername:book.bookOwnerName
+        receivername:book.bookOwnerName,
+        bookTitle:book.bookName,
+        authorName:book.authorName,
+        bookDescription:book.bookDescription,
+        genre:book.genre,
+        isbnNumber:book.isbnNumber,
+        imageUrl:book.imageUrl  
     });
 }
 submitMessage=()=>
@@ -215,7 +221,8 @@ messageContentHandler=(e)=>
         bookOwnerName:book.bookOwnerName,
         bookDescription:book.bookDescription,
         genre:book.genre,
-        isbnNumber:book.isbnNumber        
+        isbnNumber:book.isbnNumber,
+        imageUrl:book.imageUrl  
     });
 }
 bookCriteria=(e)=>
@@ -394,7 +401,10 @@ searchBook=(searchString)=>
                         <div class="container">
                             <div class="panel panel-default">
                                 <div class="panel-heading">Book Details </div>
-                                <div class="panel-heading">Book Name: {this.state.bookTitle}</div>
+                                <div class="panel-heading">Book Name: {this.state.bookTitle} </div>
+                                <center>
+                                    <img className="card-img-top" data-src={bookImage} src={this.state.imageUrl||bookImage}/>
+                                </center>
                                 <div class="panel-body">Author Name: {this.state.authorName}</div>
                                 <div class="panel-body">Genre: {this.state.genre}</div>
                                 <div class="panel-body">Book Owner: {this.state.bookOwnerName}</div>
@@ -427,8 +437,11 @@ searchBook=(searchString)=>
                             <b>Send Message</b>
                         </Button>{" "}
                         <Button variant="primary" onClick={this.cancelModal}>
-                            <b>Cancel</b>
+                            <b>Cancel1</b>
                         </Button>
+                    </center>
+                    <center>
+                        <img className="card-img-top" data-src={bookImage} src={this.state.imageUrl||bookImage}/>
                     </center>
                 </Modal>
             </div>
