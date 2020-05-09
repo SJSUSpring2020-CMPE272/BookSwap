@@ -20,6 +20,7 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
+import {GoogleMap, withScriptjs, withGoogleMap} from "react-google-maps"
 
 let swapcheck = [];
 
@@ -30,6 +31,7 @@ class Dashboard extends Component {
             allBookDetails : [],
             bookIsOpen:false,
             openMessage:false,
+            isMeetingLocationModalOpen: false,
             pageIndex:1,
             searchString:'',
             books:[],
@@ -44,6 +46,7 @@ class Dashboard extends Component {
         this.closeModal = this.closeModal.bind(this);
         this.cancelModal = this.cancelModal.bind(this);
         this.getBooksList = this.getBooksList.bind(this);
+        this.closeMeetingLocations = this.closeMeetingLocations.bind(this);
     }  
     componentDidMount() {
       this.searchBook(null);
@@ -134,6 +137,16 @@ cancelModal() {
         openMessage:false
     });
 }
+closeMeetingLocations() {
+    this.setState({
+        isMeetingLocationModalOpen:false
+    });
+}
+openMeetingLocationModal() {
+    this.setState({
+        isMeetingLocationModalOpen:true
+    });
+}
 openMessageModal(book) {
     this.setState({
         openMessage:true,
@@ -204,6 +217,7 @@ submitLatLong=(book)=>
                 for(var business of businesses) {
                     console.log(business);
                 }
+                this.openMeetingLocationModal()
            }
        })
        .catch(err => { 
@@ -383,6 +397,15 @@ searchBook=(searchString)=>
         this.setState({errorMessage:"Books cannot be viewed"});
     });
 }
+
+Map() {
+    return (
+        <GoogleMap
+            defaultZoom = {10}
+            defaultCenter = {{lat: 45, lng: -75}
+        }/>
+    );
+}
     
     render(){
         //iterate over books to create a table row
@@ -535,6 +558,25 @@ searchBook=(searchString)=>
                             <b>Send Message</b>
                         </Button>{" "}
                         <Button variant="primary" onClick={this.cancelModal}>
+                            <b>Cancel</b>
+                        </Button>
+                    </center>
+                </Modal>
+                <Modal
+                    isOpen={this.state.isMeetingLocationModalOpen}
+                    onRequestClose={this.closeMeetingLocations}
+                    contentLabel="Example Modal" >
+
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Select Meeting Location</div>
+                        <div class="panel-body"></div>
+                    </div>
+                    <center>
+                        <Button variant="primary" onClick={this.submitMeetingLocation}>
+                            <b>Confirm Location</b>
+                        </Button>{" "}
+                        <Button variant="primary" onClick={this.closeMeetingLocations}>
                             <b>Cancel</b>
                         </Button>
                     </center>
