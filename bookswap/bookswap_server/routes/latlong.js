@@ -24,10 +24,10 @@ console.log("reached add latlong"+JSON.stringify(req.body))
 
 var payload = req.body;
 
-var lat1 = payload.lat1;
-var lat2 = payload.lat2;
-var lng1 = payload.long1;
-var lng2 = payload.long2;
+var lat1 = parseFloat(payload.lat1);
+var lat2 = parseFloat(payload.lat2);
+var lng1 = parseFloat(payload.long1);
+var lng2 = parseFloat(payload.long2);
 
 //-- Longitude difference
     var dLng = (lng2 - lng1).toRad();

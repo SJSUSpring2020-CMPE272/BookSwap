@@ -168,8 +168,47 @@ sendSwapRequest = (book) =>{
         alert("Error in your swap request");
     });
 
-
+    // Show suggested meeting locations
+    this.submitLatLong(book)
 }
+submitLatLong=(book)=>
+   {
+
+    var localLat = 0;
+    var localLong = 0;
+
+    navigator.geolocation.getCurrentPosition(
+        (position) => {
+
+            localLat = position.coords.latitude
+            localLong = position.coords.longitude
+            console.log("Cordinates"+localLat, localLong);
+                
+            });
+
+    console.log(book);
+       let data = {
+            lat1 : book.location.latitude,
+            long1 : book.location.longitude,
+            lat2: localStorage.getItem("userLat"),
+            long2: localStorage.getItem("userLon")
+        }
+
+        console.log("Clicked test");
+
+   axios.post(backendURI +'/latlong/',data)
+       .then(response => {
+           console.log("Status Code : ",response.status,response.data);
+           if(response.status === 200){
+              let latLongResponse=response.data;
+               alert(JSON.stringify(latLongResponse, null, 2)); 
+           }
+       })
+       .catch(err => { 
+           this.setState({errorMessage:"Message could no be sent"});
+       });
+      
+   } 
 submitMessage=()=>
 {
     let data = {
