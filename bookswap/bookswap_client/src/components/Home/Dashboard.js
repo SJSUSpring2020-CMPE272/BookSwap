@@ -20,7 +20,7 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import {GoogleMap, withScriptjs, withGoogleMap} from "react-google-maps"
+import SimpleMap from './SimpleMap';
 
 let swapcheck = [];
 
@@ -57,7 +57,7 @@ class Dashboard extends Component {
     this.setState({
         bookIsOpen: false
     });
-}
+  }
 
 getBooksList = () => {
     let userId=localStorage.getItem("user_id");
@@ -156,30 +156,30 @@ openMessageModal(book) {
 }
 
 sendSwapRequest = (book) =>{
-    // console.log(book);
-    // let data = {
-    //     senderid:localStorage.getItem("user_id"),
-    //     sname:localStorage.getItem("user_name"),
-    //     receiverid: book.bookOwnerId,
-    //     rname: book.bookOwnerName,
-    //     requeststatus: 'In Progress',
-    //     bookName: book.bookName,
-    //     authorName: book.authorName,
-    //     isbnNumber:book.isbnNumber,
-    //     bookDescription:book.description,
-    //     genre:book.genre
+    console.log(book);
+    let data = {
+        senderid:localStorage.getItem("user_id"),
+        sname:localStorage.getItem("user_name"),
+        receiverid: book.bookOwnerId,
+        rname: book.bookOwnerName,
+        requeststatus: 'In Progress',
+        bookName: book.bookName,
+        authorName: book.authorName,
+        isbnNumber:book.isbnNumber,
+        bookDescription:book.description,
+        genre:book.genre
 
-    // };
+    };
 
-    // axios.post(backendURI +'/requests/addrequest',data)
-    // .then(response => {
-    //     if(response.status === 200){
-    //         alert("Your swap request has been submitted successfully");
-    //     }
-    // })
-    // .catch(err => { 
-    //     alert("Error in your swap request");
-    // });
+    axios.post(backendURI +'/requests/addrequest',data)
+    .then(response => {
+        if(response.status === 200){
+            alert("Your swap request has been submitted successfully");
+        }
+    })
+    .catch(err => { 
+        alert("Error in your swap request");
+    });
 
     // Show suggested meeting locations
     this.submitLatLong(book)
@@ -397,15 +397,6 @@ searchBook=(searchString)=>
         this.setState({errorMessage:"Books cannot be viewed"});
     });
 }
-
-Map() {
-    return (
-        <GoogleMap
-            defaultZoom = {10}
-            defaultCenter = {{lat: 45, lng: -75}
-        }/>
-    );
-}
     
     render(){
         //iterate over books to create a table row
@@ -570,7 +561,7 @@ Map() {
 
                     <div class="panel panel-default">
                         <div class="panel-heading">Select Meeting Location</div>
-                        <div class="panel-body"></div>
+                        <div class="panel-body"><SimpleMap></SimpleMap></div>
                     </div>
                     <center>
                         <Button variant="primary" onClick={this.submitMeetingLocation}>
