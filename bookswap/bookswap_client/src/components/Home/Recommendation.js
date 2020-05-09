@@ -33,12 +33,14 @@ class Recommendation extends Component {
     axios.get(`https://cors-anywhere.herokuapp.com/https://14645873.ngrok.io/predictions/${this.state.searchString}`)
     .then(response => {
         if(response.status === 200){
-          var result = response.data;let books=[];let i=0;
+          var result = response.data;
+          let books=[];
+          let i=0;
          
           for(var key of Object.keys(result))
           {
-          books[i]=result[key];
-          i++
+            books[i]=result[key];
+            i++
           }
          
             console.log(JSON.stringify(books))

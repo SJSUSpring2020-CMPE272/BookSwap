@@ -49,7 +49,7 @@ var lng2 = parseFloat(payload.long2);
     var options = {
       'method': 'GET',
       'hostname': 'api.yelp.com',
-      'path': '/v3/businesses/search?term=starbucks&latitude=37.786882&longitude=-122.399972',
+      'path': '/v3/businesses/search?term=starbucks&latitude=' + lat3.toDeg() +'&longitude=' + lng3.toDeg() + '&radius=4828&limit=5',
       'headers': {
         'Authorization': 'Bearer d3WAXc8JyiQ2mEQZJT6f3XQT3W8GzeNtBPiKuVHPtV8hv9ffDGixBB0i_l-yAKaRRd_MKdoPkzWC2HmTGH2NiiPe304zXzWdXbv7nfRKgRONAiU8zHJY2T0ppEUIWXYx',
         'Cookie': '__cfduid=d9c0e02eb591bd9a1a5efd457c08f71861588934698'
@@ -57,29 +57,25 @@ var lng2 = parseFloat(payload.long2);
       'maxRedirects': 20
     };
 
-    var req = https.request(options, function (res) {
+    var req = https.request(options, function (res1) {
       var chunks = [];
 
-      res.on("data", function (chunk) {
+      res1.on("data", function (chunk) {
         chunks.push(chunk);
       });
 
-      res.on("end", function (chunk) {
+      res1.on("end", function (chunk) {
         var body = Buffer.concat(chunks);
         console.log(body.toString());
+        res.status(200).end(body);
       });
 
-      res.on("error", function (error) {
+      res1.on("error", function (error) {
         console.error(error);
       });
     });
 
     req.end();
-
-
-
-res.status(200).end("received latlong: " + JSON.stringify(lat3.toDeg() + " " + lng3.toDeg()));
-
 })
 
 module.exports = router;

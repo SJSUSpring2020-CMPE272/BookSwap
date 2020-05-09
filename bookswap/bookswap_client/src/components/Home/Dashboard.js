@@ -143,30 +143,30 @@ openMessageModal(book) {
 }
 
 sendSwapRequest = (book) =>{
-    console.log(book);
-    let data = {
-        senderid:localStorage.getItem("user_id"),
-        sname:localStorage.getItem("user_name"),
-        receiverid: book.bookOwnerId,
-        rname: book.bookOwnerName,
-        requeststatus: 'In Progress',
-        bookName: book.bookName,
-        authorName: book.authorName,
-        isbnNumber:book.isbnNumber,
-        bookDescription:book.description,
-        genre:book.genre
+    // console.log(book);
+    // let data = {
+    //     senderid:localStorage.getItem("user_id"),
+    //     sname:localStorage.getItem("user_name"),
+    //     receiverid: book.bookOwnerId,
+    //     rname: book.bookOwnerName,
+    //     requeststatus: 'In Progress',
+    //     bookName: book.bookName,
+    //     authorName: book.authorName,
+    //     isbnNumber:book.isbnNumber,
+    //     bookDescription:book.description,
+    //     genre:book.genre
 
-    };
+    // };
 
-    axios.post(backendURI +'/requests/addrequest',data)
-    .then(response => {
-        if(response.status === 200){
-            alert("Your swap request has been submitted successfully");
-        }
-    })
-    .catch(err => { 
-        alert("Error in your swap request");
-    });
+    // axios.post(backendURI +'/requests/addrequest',data)
+    // .then(response => {
+    //     if(response.status === 200){
+    //         alert("Your swap request has been submitted successfully");
+    //     }
+    // })
+    // .catch(err => { 
+    //     alert("Error in your swap request");
+    // });
 
     // Show suggested meeting locations
     this.submitLatLong(book)
@@ -194,14 +194,16 @@ submitLatLong=(book)=>
             long2: localStorage.getItem("userLon")
         }
 
-        console.log("Clicked test");
-
    axios.post(backendURI +'/latlong/',data)
        .then(response => {
-           console.log("Status Code : ",response.status,response.data);
+           // console.log("Status Code : ",response.status,response.data);
            if(response.status === 200){
-              let latLongResponse=response.data;
-               alert(JSON.stringify(latLongResponse, null, 2)); 
+                var result = response.data;
+                let businesses = result["businesses"];
+
+                for(var business of businesses) {
+                    console.log(business);
+                }
            }
        })
        .catch(err => { 
