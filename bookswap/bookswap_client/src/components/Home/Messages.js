@@ -20,12 +20,36 @@ class Messages extends Component {
            
         };
         this.closeModal = this.closeModal.bind(this);
-        
+        this.submitLatLong = this.submitLatLong.bind(this);
     }
     componentWillMount() {
       this.getAllReceiver();
       this.getAllSender();
    }
+submitLatLong=()=>
+   {
+       let data = {
+            lat1 : 37.340703,
+            long1 : -121.898715,
+            lat2: 37.335375,
+            long2: -121.881050
+        }
+
+        console.log("Clicked test");
+
+   axios.post(backendURI +'/latlong/',data)
+       .then(response => {
+           console.log("Status Code : ",response.status,response.data);
+           if(response.status === 200){
+              let latLongResponse=response.data;
+               alert(JSON.stringify(latLongResponse, null, 2)); 
+           }
+       })
+       .catch(err => { 
+           this.setState({errorMessage:"Message could no be sent"});
+       });
+      
+   } 
 getAllReceiver=()=>
 {
    let data =
@@ -207,6 +231,7 @@ messageContentHandler=(e)=>
                           <Button variant="primary" onClick={this.closeModal}>
                               <b>Close</b>
                           </Button>
+                          <button onClick = {() => this.submitLatLong()} class="btn btn-primary">Test</button>
                       </center>
                   </Modal>
       </div>
