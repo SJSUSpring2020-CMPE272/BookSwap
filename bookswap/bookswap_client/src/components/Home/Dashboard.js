@@ -21,6 +21,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 
+let swapcheck = [];
 
 class Dashboard extends Component {
     constructor(){
@@ -47,6 +48,7 @@ class Dashboard extends Component {
     componentDidMount() {
       this.searchBook(null);
       this.getBooksList();
+      this.swapCheck();
   }
   closeModal() {
     this.setState({
@@ -91,6 +93,40 @@ getBooksList = () => {
       });
 };
 
+swapCheck = () => {
+    let userId=localStorage.getItem("user_id");
+    const data={userid : userId}
+    console.log(userId);
+      axios.post(backendURI +'/requests/swapcheck',data)
+      .then(response => {
+          if(response.status === 200){
+              response.data.forEach(element => {
+                if(element.requeststatus != 'Declined'){
+                    swapcheck.push(element);
+                }
+              });
+              this.setState({
+                swapcheck: swapcheck
+            });
+          }
+      })
+      .catch(err => { 
+          this.setState({errorMessage:"swapcheck error"});
+      });
+}
+
+checkSwapStatus = (book) => {
+    let result = false;
+    swapcheck.forEach(element => {
+        if(element.bookName === book.bookName){
+            result = true;
+        }
+    });
+
+    return result;
+
+}
+
 
 
 cancelModal() {
@@ -104,6 +140,35 @@ openMessageModal(book) {
         receiverid:book.bookOwnerId,
         receivername:book.bookOwnerName
     });
+}
+
+sendSwapRequest = (book) =>{
+    console.log(book);
+    let data = {
+        senderid:localStorage.getItem("user_id"),
+        sname:localStorage.getItem("user_name"),
+        receiverid: book.bookOwnerId,
+        rname: book.bookOwnerName,
+        requeststatus: 'In Progress',
+        bookName: book.bookName,
+        authorName: book.authorName,
+        isbnNumber:book.isbnNumber,
+        bookDescription:book.description,
+        genre:book.genre
+
+    };
+
+    axios.post(backendURI +'/requests/addrequest',data)
+    .then(response => {
+        if(response.status === 200){
+            alert("Your swap request has been submitted successfully");
+        }
+    })
+    .catch(err => { 
+        alert("Error in your swap request");
+    });
+
+
 }
 submitMessage=()=>
 {
@@ -292,6 +357,7 @@ searchBook=(searchString)=>
                           <th></th>
                             <th>Book Name</th>
                             <th>Details</th>
+                            <th>Chat</th>
                             <th>Swap</th>
                             
                         </tr>
@@ -303,6 +369,7 @@ searchBook=(searchString)=>
                      <td>{book.bookName}</td>
                      <td><Button variant="primary" onClick={() => this.openBookModal(book)}>View Book Details</Button></td>
                      <td><Button onClick={() => this.openMessageModal(book)}>Send Message</Button></td>
+                     <td><Button disabled={this.checkSwapStatus(book)} onClick={() => this.sendSwapRequest(book)}>Swap Book</Button></td>
                    </tr>
                     )
                   }
