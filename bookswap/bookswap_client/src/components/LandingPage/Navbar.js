@@ -62,6 +62,7 @@ class Navbar extends Component {
                     <li><Link to="/dashboard">Dashboard</Link></li>
                      <li><Link to="/recommendation">Recommendations</Link></li>
                         <li><Link to="/messages">Messages</Link></li>
+                        <li><Link to="/requests">Requests</Link></li>
                         <li><Link to="/profile"><span class="glyphicon glyphicon-user"></span>Profile</Link></li>
                         <li><Link to="/" onClick = {this.handleLogout}><span class="glyphicon glyphicon-user"></span>Logout</Link></li>
                 </ul>

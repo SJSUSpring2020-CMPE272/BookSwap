@@ -7,6 +7,7 @@ import Aboutus from './Home/Aboutus';
 import Profile from './Home/Profile';
 import Messages from './Home/Messages';
 import Recommendation from './Home/Recommendation';
+import Requests from './Home/Requests';
 import Navbar from './LandingPage/Navbar';
 import Dashboard from './Home/Dashboard';
 //Create a Main Component
@@ -23,7 +24,8 @@ class Main extends Component {
                 <Route path="/dashboard" component={Dashboard}/>  
                 <Route path="/profile" component={Profile}/>
                 <Route path="/messages" component={Messages}/>
-                <Route path="/recommendation" component={Recommendation}/> 
+                <Route path="/recommendation" component={Recommendation}/>
+                <Route path="/requests" component={Requests}/> 
                  
             </div>
         )
