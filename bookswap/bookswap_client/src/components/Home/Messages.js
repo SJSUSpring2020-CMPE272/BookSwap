@@ -20,7 +20,6 @@ class Messages extends Component {
            
         };
         this.closeModal = this.closeModal.bind(this);
-        
     }
     componentWillMount() {
       this.getAllReceiver();
