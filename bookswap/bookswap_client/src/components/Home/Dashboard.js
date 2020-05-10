@@ -20,6 +20,8 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
+import SimpleMap from './SimpleMap';
+import AddressTable from './AddressTable';
 
 let swapcheck = [];
 
@@ -30,6 +32,7 @@ class Dashboard extends Component {
             allBookDetails : [],
             bookIsOpen:false,
             openMessage:false,
+            isMeetingLocationModalOpen: false,
             pageIndex:1,
             searchString:'',
             books:[],
@@ -44,6 +47,7 @@ class Dashboard extends Component {
         this.closeModal = this.closeModal.bind(this);
         this.cancelModal = this.cancelModal.bind(this);
         this.getBooksList = this.getBooksList.bind(this);
+        this.closeMeetingLocations = this.closeMeetingLocations.bind(this);
     }  
     componentDidMount() {
       this.searchBook(null);
@@ -54,7 +58,7 @@ class Dashboard extends Component {
     this.setState({
         bookIsOpen: false
     });
-}
+  }
 
 getBooksList = () => {
     let userId=localStorage.getItem("user_id");
@@ -134,6 +138,23 @@ cancelModal() {
         openMessage:false
     });
 }
+closeMeetingLocations() {
+    this.setState({
+        isMeetingLocationModalOpen:false
+    });
+}
+openMeetingLocationModal(zoom, center, loc0, loc1, loc2, loc3, loc4) {
+    this.setState({
+        isMeetingLocationModalOpen:true,
+        zoom: zoom,
+        center: center,
+        loc0: loc0,
+        loc1: loc1,
+        loc2: loc2,
+        loc3: loc3,
+        loc4: loc4
+    });
+}
 openMessageModal(book) {
     this.setState({
         openMessage:true,
@@ -168,8 +189,56 @@ sendSwapRequest = (book) =>{
         alert("Error in your swap request");
     });
 
-
+    // Show suggested meeting locations
+    this.submitLatLong(book)
 }
+submitLatLong=(book)=>
+   {
+
+    var localLat = 0;
+    var localLong = 0;
+
+    navigator.geolocation.getCurrentPosition(
+        (position) => {
+
+            localLat = position.coords.latitude
+            localLong = position.coords.longitude
+            console.log("Cordinates"+localLat, localLong);
+
+            let data = {
+            lat1 : book.location.latitude,
+            long1 : book.location.longitude,
+            lat2: localLat,
+            long2: localLong
+        }
+
+   axios.post(backendURI +'/latlong/',data)
+       .then(response => {
+           // console.log("Status Code : ",response.status,response.data);
+           if(response.status === 200) {
+                var result = response.data;
+                let businesses = result["businesses"];
+
+                var center = {lat:result["region"]["center"]["latitude"], lng:result["region"]["center"]["longitude"]}
+                var loc0 = {lat:businesses[0]["coordinates"]["latitude"], lng:businesses[0]["coordinates"]["longitude"], text: "A", name: businesses[0]["name"], address: businesses[0]["location"]["display_address"][0] + "," + businesses[0]["location"]["display_address"][1]}
+                var loc1 = {lat:businesses[1]["coordinates"]["latitude"], lng:businesses[1]["coordinates"]["longitude"], text: "B", name: businesses[1]["name"], address: businesses[1]["location"]["display_address"][0] + "," + businesses[1]["location"]["display_address"][1]}
+                var loc2 = {lat:businesses[2]["coordinates"]["latitude"], lng:businesses[2]["coordinates"]["longitude"], text: "C", name: businesses[2]["name"], address: businesses[2]["location"]["display_address"][0] + "," + businesses[2]["location"]["display_address"][1]}
+                var loc3 = {lat:businesses[3]["coordinates"]["latitude"], lng:businesses[3]["coordinates"]["longitude"], text: "D", name: businesses[3]["name"], address: businesses[3]["location"]["display_address"][0] + "," + businesses[3]["location"]["display_address"][1]}
+                var loc4 = {lat:businesses[4]["coordinates"]["latitude"], lng:businesses[4]["coordinates"]["longitude"], text: "E", name: businesses[4]["name"], address: businesses[4]["location"]["display_address"][0] + "," + businesses[4]["location"]["display_address"][1]}
+                
+                this.openMeetingLocationModal(13, 
+                    center,loc0,loc1,loc2,loc3,loc4)
+           }
+       })
+       .catch(err => { 
+           this.setState({errorMessage:"Message could no be sent"});
+       });
+                
+            });
+
+    console.log(book);
+      
+   } 
 submitMessage=()=>
 {
     let data = {
@@ -495,6 +564,39 @@ searchBook=(searchString)=>
                         </Button>{" "}
                         <Button variant="primary" onClick={this.cancelModal}>
                             <b>Cancel</b>
+                        </Button>
+                    </center>
+                </Modal>
+                <Modal
+                    isOpen={this.state.isMeetingLocationModalOpen}
+                    onRequestClose={this.closeMeetingLocations}
+                    contentLabel="Example Modal" >
+
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Meeting Point Suggestions...</div>
+                        <div class="panel-body">
+                        <SimpleMap 
+                          zoom = {this.state.zoom} 
+                          center = {this.state.center} 
+                          loc0 = {this.state.loc0}
+                          loc1 = {this.state.loc1}
+                          loc2 = {this.state.loc2}
+                          loc3 = {this.state.loc3}
+                          loc4 = {this.state.loc4}>
+                        </SimpleMap>
+                        <AddressTable
+                          loc0 = {this.state.loc0}
+                          loc1 = {this.state.loc1}
+                          loc2 = {this.state.loc2}
+                          loc3 = {this.state.loc3}
+                          loc4 = {this.state.loc4}>
+                        </AddressTable>
+                        </div>
+                    </div>
+                    <center>
+                        <Button variant="primary" onClick={this.closeMeetingLocations}>
+                            <b>Close</b>
                         </Button>
                     </center>
                 </Modal>

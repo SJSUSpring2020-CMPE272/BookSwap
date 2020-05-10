@@ -16,8 +16,6 @@ class Aboutus extends Component {
             books : [],
             index :0
         }
-       
-
     }  
     //get the books data from backend  
     
