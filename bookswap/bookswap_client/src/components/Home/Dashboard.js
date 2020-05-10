@@ -38,6 +38,7 @@ class Dashboard extends Component {
             books:[],
             booksList:[],
             categories:[],
+            categoriesMap:{},
             categorisedBooks: [],
             unCategorisedBooks: [],
             authorsList: [],
@@ -69,6 +70,7 @@ getBooksList = () => {
               let allBookDetails=response.data;
               let books = [];
               let categories = [];
+              let categoriesMap = {};
               let authors = [];
               allBookDetails.forEach(detail => {
                     if(!books.includes(detail.authorName)){
@@ -80,10 +82,22 @@ getBooksList = () => {
                     if(!authors.includes(detail.authorName)){
                         authors.push({title:detail.authorName});
                     }
+                    if(detail.genre in categoriesMap) {
+                        categoriesMap[detail.genre] = categoriesMap[detail.genre] + 1;
+                    } else {
+                        categoriesMap[detail.genre] = 1;
+                    }
               });
+
+              allBookDetails = this.sortAllBooks(allBookDetails, categoriesMap);
+              this.setState({
+                  allBookDetails   
+              });
+              
               this.setState({
                 booksList: books,
                 categories: categories,
+                categoriesMap: categoriesMap,
                 categorisedBooks: allBookDetails,
                 unCategorisedBooks: allBookDetails,
                 authorsList: authors,
@@ -96,6 +110,28 @@ getBooksList = () => {
           this.setState({errorMessage:"Students cannot be viewed"});
       });
 };
+
+sortAllBooks = (allBookDetails, categoriesCountMap) => {
+    var sortedGenres = [];
+    for (var genre in categoriesCountMap) {
+        sortedGenres.push([genre, categoriesCountMap[genre]]);
+    }
+
+    sortedGenres.sort(function(a, b) {
+        return b[1] - a[1];
+    });
+
+    var tempBookDetails = [];
+
+    sortedGenres.forEach(genre => {
+        allBookDetails.forEach(detail => {
+            if(detail.genre === genre[0]) {
+                tempBookDetails.push(detail);
+            }
+        });
+    });
+    return tempBookDetails;
+}
 
 swapCheck = () => {
     let userId=localStorage.getItem("user_id");
