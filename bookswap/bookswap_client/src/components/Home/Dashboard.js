@@ -37,6 +37,7 @@ class Dashboard extends Component {
             searchString:'',
             books:[],
             booksList:[],
+            swapBookDetails: [],
             categories:[],
             categoriesMap:{},
             categorisedBooks: [],
@@ -52,6 +53,7 @@ class Dashboard extends Component {
     }  
     componentDidMount() {
       this.searchBook(null);
+      this.getSwapBook();
       this.getBooksList();
       this.swapCheck();
   }
@@ -60,6 +62,27 @@ class Dashboard extends Component {
         bookIsOpen: false
     });
   }
+
+getSwapBook = async () => {
+        let userId = localStorage.getItem("user_id");
+        const data = { bookOwnerId: userId }
+        let result = await axios.post(backendURI + '/book/getSwapBook', data)
+        let swapBookDetails = result.data;
+        console.log(swapBookDetails);
+
+        let categoriesMap = {};
+
+        swapBookDetails.forEach(detail => {
+            if(detail.genre in categoriesMap) {
+                categoriesMap[detail.genre] = categoriesMap[detail.genre] + 1;
+            } else {
+                categoriesMap[detail.genre] = 1;
+            }
+        });
+        await this.setState({ 
+            swapBookDetails :swapBookDetails,
+            categoriesMap : categoriesMap });
+    };
 
 getBooksList = () => {
     let userId=localStorage.getItem("user_id");
@@ -70,7 +93,6 @@ getBooksList = () => {
               let allBookDetails=response.data;
               let books = [];
               let categories = [];
-              let categoriesMap = {};
               let authors = [];
               allBookDetails.forEach(detail => {
                     if(!books.includes(detail.authorName)){
@@ -82,22 +104,17 @@ getBooksList = () => {
                     if(!authors.includes(detail.authorName)){
                         authors.push({title:detail.authorName});
                     }
-                    if(detail.genre in categoriesMap) {
-                        categoriesMap[detail.genre] = categoriesMap[detail.genre] + 1;
-                    } else {
-                        categoriesMap[detail.genre] = 1;
-                    }
               });
 
-              allBookDetails = this.sortAllBooks(allBookDetails, categoriesMap);
+              allBookDetails = this.sortAllBooks(allBookDetails, this.state.categoriesMap);
+              
               this.setState({
                   allBookDetails   
               });
-              
+
               this.setState({
                 booksList: books,
                 categories: categories,
-                categoriesMap: categoriesMap,
                 categorisedBooks: allBookDetails,
                 unCategorisedBooks: allBookDetails,
                 authorsList: authors,
