@@ -3,7 +3,7 @@ import GoogleMapReact from 'google-map-react';
 
 //Based on https://github.com/google-map-react/google-map-react#rendering-in-a-modal
 
-const AnyReactComponent = ({ text }) => <div>{text}</div>;
+const AnyReactComponent = ({ text }) => <div class="circle">{text}</div>;
 
 class SimpleMap extends Component {
   static defaultProps = {
@@ -26,7 +26,7 @@ class SimpleMap extends Component {
           <AnyReactComponent
             lat={this.props.center.lat}
             lng={this.props.center.lng}
-            text="My Marker"
+            text="A"
           />
         </GoogleMapReact>
       </div>
