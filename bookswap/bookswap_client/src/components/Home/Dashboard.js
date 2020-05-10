@@ -21,6 +21,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import SimpleMap from './SimpleMap';
+import AddressTable from './AddressTable';
 
 let swapcheck = [];
 
@@ -163,30 +164,30 @@ openMessageModal(book) {
 }
 
 sendSwapRequest = (book) =>{
-    // console.log(book);
-    // let data = {
-    //     senderid:localStorage.getItem("user_id"),
-    //     sname:localStorage.getItem("user_name"),
-    //     receiverid: book.bookOwnerId,
-    //     rname: book.bookOwnerName,
-    //     requeststatus: 'In Progress',
-    //     bookName: book.bookName,
-    //     authorName: book.authorName,
-    //     isbnNumber:book.isbnNumber,
-    //     bookDescription:book.description,
-    //     genre:book.genre
+    console.log(book);
+    let data = {
+        senderid:localStorage.getItem("user_id"),
+        sname:localStorage.getItem("user_name"),
+        receiverid: book.bookOwnerId,
+        rname: book.bookOwnerName,
+        requeststatus: 'In Progress',
+        bookName: book.bookName,
+        authorName: book.authorName,
+        isbnNumber:book.isbnNumber,
+        bookDescription:book.description,
+        genre:book.genre
 
-    // };
+    };
 
-    // axios.post(backendURI +'/requests/addrequest',data)
-    // .then(response => {
-    //     if(response.status === 200){
-    //         alert("Your swap request has been submitted successfully");
-    //     }
-    // })
-    // .catch(err => { 
-    //     alert("Error in your swap request");
-    // });
+    axios.post(backendURI +'/requests/addrequest',data)
+    .then(response => {
+        if(response.status === 200){
+            alert("Your swap request has been submitted successfully");
+        }
+    })
+    .catch(err => { 
+        alert("Error in your swap request");
+    });
 
     // Show suggested meeting locations
     this.submitLatLong(book)
@@ -219,11 +220,11 @@ submitLatLong=(book)=>
                 let businesses = result["businesses"];
 
                 var center = {lat:result["region"]["center"]["latitude"], lng:result["region"]["center"]["longitude"]}
-                var loc0 = {lat:businesses[0]["coordinates"]["latitude"], lng:businesses[0]["coordinates"]["longitude"], text: "A"}
-                var loc1 = {lat:businesses[1]["coordinates"]["latitude"], lng:businesses[1]["coordinates"]["longitude"], text: "B"}
-                var loc2 = {lat:businesses[2]["coordinates"]["latitude"], lng:businesses[2]["coordinates"]["longitude"], text: "C"}
-                var loc3 = {lat:businesses[3]["coordinates"]["latitude"], lng:businesses[3]["coordinates"]["longitude"], text: "D"}
-                var loc4 = {lat:businesses[4]["coordinates"]["latitude"], lng:businesses[4]["coordinates"]["longitude"], text: "E"}
+                var loc0 = {lat:businesses[0]["coordinates"]["latitude"], lng:businesses[0]["coordinates"]["longitude"], text: "A", name: businesses[0]["name"], address: businesses[0]["location"]["display_address"][0] + "," + businesses[0]["location"]["display_address"][1]}
+                var loc1 = {lat:businesses[1]["coordinates"]["latitude"], lng:businesses[1]["coordinates"]["longitude"], text: "B", name: businesses[1]["name"], address: businesses[1]["location"]["display_address"][0] + "," + businesses[1]["location"]["display_address"][1]}
+                var loc2 = {lat:businesses[2]["coordinates"]["latitude"], lng:businesses[2]["coordinates"]["longitude"], text: "C", name: businesses[2]["name"], address: businesses[2]["location"]["display_address"][0] + "," + businesses[2]["location"]["display_address"][1]}
+                var loc3 = {lat:businesses[3]["coordinates"]["latitude"], lng:businesses[3]["coordinates"]["longitude"], text: "D", name: businesses[3]["name"], address: businesses[3]["location"]["display_address"][0] + "," + businesses[3]["location"]["display_address"][1]}
+                var loc4 = {lat:businesses[4]["coordinates"]["latitude"], lng:businesses[4]["coordinates"]["longitude"], text: "E", name: businesses[4]["name"], address: businesses[4]["location"]["display_address"][0] + "," + businesses[4]["location"]["display_address"][1]}
                 
                 this.openMeetingLocationModal(13, 
                     center,loc0,loc1,loc2,loc3,loc4)
@@ -573,22 +574,29 @@ searchBook=(searchString)=>
 
 
                     <div class="panel panel-default">
-                        <div class="panel-heading">Select Meeting Location</div>
-                        <div class="panel-body"><SimpleMap 
-                        zoom = {this.state.zoom} 
-                        center = {this.state.center} 
-                        loc0 = {this.state.loc0}
-                        loc1 = {this.state.loc1}
-                        loc2 = {this.state.loc2}
-                        loc3 = {this.state.loc3}
-                        loc4 = {this.state.loc4}></SimpleMap></div>
+                        <div class="panel-heading">Meeting Point Suggestions...</div>
+                        <div class="panel-body">
+                        <SimpleMap 
+                          zoom = {this.state.zoom} 
+                          center = {this.state.center} 
+                          loc0 = {this.state.loc0}
+                          loc1 = {this.state.loc1}
+                          loc2 = {this.state.loc2}
+                          loc3 = {this.state.loc3}
+                          loc4 = {this.state.loc4}>
+                        </SimpleMap>
+                        <AddressTable
+                          loc0 = {this.state.loc0}
+                          loc1 = {this.state.loc1}
+                          loc2 = {this.state.loc2}
+                          loc3 = {this.state.loc3}
+                          loc4 = {this.state.loc4}>
+                        </AddressTable>
+                        </div>
                     </div>
                     <center>
-                        <Button variant="primary" onClick={this.submitMeetingLocation}>
-                            <b>Confirm Location</b>
-                        </Button>{" "}
                         <Button variant="primary" onClick={this.closeMeetingLocations}>
-                            <b>Cancel</b>
+                            <b>Close</b>
                         </Button>
                     </center>
                 </Modal>
