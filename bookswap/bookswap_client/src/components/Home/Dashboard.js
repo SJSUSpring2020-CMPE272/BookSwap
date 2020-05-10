@@ -142,9 +142,11 @@ closeMeetingLocations() {
         isMeetingLocationModalOpen:false
     });
 }
-openMeetingLocationModal() {
+openMeetingLocationModal(zoom, center) {
     this.setState({
-        isMeetingLocationModalOpen:true
+        isMeetingLocationModalOpen:true,
+        zoom: zoom,
+        center: center,
     });
 }
 openMessageModal(book) {
@@ -156,30 +158,30 @@ openMessageModal(book) {
 }
 
 sendSwapRequest = (book) =>{
-    console.log(book);
-    let data = {
-        senderid:localStorage.getItem("user_id"),
-        sname:localStorage.getItem("user_name"),
-        receiverid: book.bookOwnerId,
-        rname: book.bookOwnerName,
-        requeststatus: 'In Progress',
-        bookName: book.bookName,
-        authorName: book.authorName,
-        isbnNumber:book.isbnNumber,
-        bookDescription:book.description,
-        genre:book.genre
+    // console.log(book);
+    // let data = {
+    //     senderid:localStorage.getItem("user_id"),
+    //     sname:localStorage.getItem("user_name"),
+    //     receiverid: book.bookOwnerId,
+    //     rname: book.bookOwnerName,
+    //     requeststatus: 'In Progress',
+    //     bookName: book.bookName,
+    //     authorName: book.authorName,
+    //     isbnNumber:book.isbnNumber,
+    //     bookDescription:book.description,
+    //     genre:book.genre
 
-    };
+    // };
 
-    axios.post(backendURI +'/requests/addrequest',data)
-    .then(response => {
-        if(response.status === 200){
-            alert("Your swap request has been submitted successfully");
-        }
-    })
-    .catch(err => { 
-        alert("Error in your swap request");
-    });
+    // axios.post(backendURI +'/requests/addrequest',data)
+    // .then(response => {
+    //     if(response.status === 200){
+    //         alert("Your swap request has been submitted successfully");
+    //     }
+    // })
+    // .catch(err => { 
+    //     alert("Error in your swap request");
+    // });
 
     // Show suggested meeting locations
     this.submitLatLong(book)
@@ -196,15 +198,12 @@ submitLatLong=(book)=>
             localLat = position.coords.latitude
             localLong = position.coords.longitude
             console.log("Cordinates"+localLat, localLong);
-                
-            });
 
-    console.log(book);
-       let data = {
+            let data = {
             lat1 : book.location.latitude,
             long1 : book.location.longitude,
-            lat2: localStorage.getItem("userLat"),
-            long2: localStorage.getItem("userLon")
+            lat2: localLat,
+            long2: localLong
         }
 
    axios.post(backendURI +'/latlong/',data)
@@ -217,12 +216,16 @@ submitLatLong=(book)=>
                 for(var business of businesses) {
                     console.log(business);
                 }
-                this.openMeetingLocationModal()
+                this.openMeetingLocationModal(17, {lat:result["region"]["center"]["latitude"], lng:result["region"]["center"]["longitude"]})
            }
        })
        .catch(err => { 
            this.setState({errorMessage:"Message could no be sent"});
        });
+                
+            });
+
+    console.log(book);
       
    } 
 submitMessage=()=>
@@ -561,7 +564,7 @@ searchBook=(searchString)=>
 
                     <div class="panel panel-default">
                         <div class="panel-heading">Select Meeting Location</div>
-                        <div class="panel-body"><SimpleMap></SimpleMap></div>
+                        <div class="panel-body"><SimpleMap zoom = {this.state.zoom} center = {this.state.center}></SimpleMap></div>
                     </div>
                     <center>
                         <Button variant="primary" onClick={this.submitMeetingLocation}>
