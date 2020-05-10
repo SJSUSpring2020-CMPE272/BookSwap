@@ -6,13 +6,6 @@ import GoogleMapReact from 'google-map-react';
 const AnyReactComponent = ({ text }) => <div class="circle">{text}</div>;
 
 class SimpleMap extends Component {
-  static defaultProps = {
-    center: {
-      lat: 59.95,
-      lng: 30.33
-    },
-    zoom: 11
-  };
 
   render() {
     return (
@@ -24,9 +17,33 @@ class SimpleMap extends Component {
           defaultZoom={this.props.zoom}
         >
           <AnyReactComponent
-            lat={this.props.center.lat}
-            lng={this.props.center.lng}
-            text="A"
+            lat={this.props.loc0.lat}
+            lng={this.props.loc0.lng}
+            text={this.props.loc0.text}
+          />
+
+          <AnyReactComponent
+            lat={this.props.loc1.lat}
+            lng={this.props.loc1.lng}
+            text={this.props.loc1.text}
+          />
+
+          <AnyReactComponent
+            lat={this.props.loc2.lat}
+            lng={this.props.loc2.lng}
+            text={this.props.loc2.text}
+          />
+
+          <AnyReactComponent
+            lat={this.props.loc3.lat}
+            lng={this.props.loc3.lng}
+            text={this.props.loc3.text}
+          />
+
+          <AnyReactComponent
+            lat={this.props.loc4.lat}
+            lng={this.props.loc4.lng}
+            text={this.props.loc4.text}
           />
         </GoogleMapReact>
       </div>

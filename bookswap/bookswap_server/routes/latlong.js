@@ -49,7 +49,7 @@ var lng2 = parseFloat(payload.long2);
     var options = {
       'method': 'GET',
       'hostname': 'api.yelp.com',
-      'path': '/v3/businesses/search?term=starbucks&latitude=' + lat3.toDeg() +'&longitude=' + lng3.toDeg() + '&radius=4828&limit=5',
+      'path': '/v3/businesses/search?term=starbucks&latitude=' + lat3.toDeg() +'&longitude=' + lng3.toDeg() + '&radius=4828',
       'headers': {
         'Authorization': 'Bearer d3WAXc8JyiQ2mEQZJT6f3XQT3W8GzeNtBPiKuVHPtV8hv9ffDGixBB0i_l-yAKaRRd_MKdoPkzWC2HmTGH2NiiPe304zXzWdXbv7nfRKgRONAiU8zHJY2T0ppEUIWXYx',
         'Cookie': '__cfduid=d9c0e02eb591bd9a1a5efd457c08f71861588934698'

@@ -142,11 +142,16 @@ closeMeetingLocations() {
         isMeetingLocationModalOpen:false
     });
 }
-openMeetingLocationModal(zoom, center) {
+openMeetingLocationModal(zoom, center, loc0, loc1, loc2, loc3, loc4) {
     this.setState({
         isMeetingLocationModalOpen:true,
         zoom: zoom,
         center: center,
+        loc0: loc0,
+        loc1: loc1,
+        loc2: loc2,
+        loc3: loc3,
+        loc4: loc4
     });
 }
 openMessageModal(book) {
@@ -209,14 +214,19 @@ submitLatLong=(book)=>
    axios.post(backendURI +'/latlong/',data)
        .then(response => {
            // console.log("Status Code : ",response.status,response.data);
-           if(response.status === 200){
+           if(response.status === 200) {
                 var result = response.data;
                 let businesses = result["businesses"];
 
-                for(var business of businesses) {
-                    console.log(business);
-                }
-                this.openMeetingLocationModal(17, {lat:result["region"]["center"]["latitude"], lng:result["region"]["center"]["longitude"]})
+                var center = {lat:result["region"]["center"]["latitude"], lng:result["region"]["center"]["longitude"]}
+                var loc0 = {lat:businesses[0]["coordinates"]["latitude"], lng:businesses[0]["coordinates"]["longitude"], text: "A"}
+                var loc1 = {lat:businesses[1]["coordinates"]["latitude"], lng:businesses[1]["coordinates"]["longitude"], text: "B"}
+                var loc2 = {lat:businesses[2]["coordinates"]["latitude"], lng:businesses[2]["coordinates"]["longitude"], text: "C"}
+                var loc3 = {lat:businesses[3]["coordinates"]["latitude"], lng:businesses[3]["coordinates"]["longitude"], text: "D"}
+                var loc4 = {lat:businesses[4]["coordinates"]["latitude"], lng:businesses[4]["coordinates"]["longitude"], text: "E"}
+                
+                this.openMeetingLocationModal(13, 
+                    center,loc0,loc1,loc2,loc3,loc4)
            }
        })
        .catch(err => { 
@@ -564,7 +574,14 @@ searchBook=(searchString)=>
 
                     <div class="panel panel-default">
                         <div class="panel-heading">Select Meeting Location</div>
-                        <div class="panel-body"><SimpleMap zoom = {this.state.zoom} center = {this.state.center}></SimpleMap></div>
+                        <div class="panel-body"><SimpleMap 
+                        zoom = {this.state.zoom} 
+                        center = {this.state.center} 
+                        loc0 = {this.state.loc0}
+                        loc1 = {this.state.loc1}
+                        loc2 = {this.state.loc2}
+                        loc3 = {this.state.loc3}
+                        loc4 = {this.state.loc4}></SimpleMap></div>
                     </div>
                     <center>
                         <Button variant="primary" onClick={this.submitMeetingLocation}>
