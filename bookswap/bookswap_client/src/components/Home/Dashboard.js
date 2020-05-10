@@ -37,7 +37,9 @@ class Dashboard extends Component {
             searchString:'',
             books:[],
             booksList:[],
+            swapBookDetails: [],
             categories:[],
+            categoriesMap:{},
             categorisedBooks: [],
             unCategorisedBooks: [],
             authorsList: [],
@@ -51,6 +53,7 @@ class Dashboard extends Component {
     }  
     componentDidMount() {
       this.searchBook(null);
+      this.getSwapBook();
       this.getBooksList();
       this.swapCheck();
   }
@@ -59,6 +62,27 @@ class Dashboard extends Component {
         bookIsOpen: false
     });
   }
+
+getSwapBook = async () => {
+        let userId = localStorage.getItem("user_id");
+        const data = { bookOwnerId: userId }
+        let result = await axios.post(backendURI + '/book/getSwapBook', data)
+        let swapBookDetails = result.data;
+        console.log(swapBookDetails);
+
+        let categoriesMap = {};
+
+        swapBookDetails.forEach(detail => {
+            if(detail.genre in categoriesMap) {
+                categoriesMap[detail.genre] = categoriesMap[detail.genre] + 1;
+            } else {
+                categoriesMap[detail.genre] = 1;
+            }
+        });
+        await this.setState({ 
+            swapBookDetails :swapBookDetails,
+            categoriesMap : categoriesMap });
+    };
 
 getBooksList = () => {
     let userId=localStorage.getItem("user_id");
@@ -81,6 +105,13 @@ getBooksList = () => {
                         authors.push({title:detail.authorName});
                     }
               });
+
+              allBookDetails = this.sortAllBooks(allBookDetails, this.state.categoriesMap);
+              
+              this.setState({
+                  allBookDetails   
+              });
+
               this.setState({
                 booksList: books,
                 categories: categories,
@@ -96,6 +127,28 @@ getBooksList = () => {
           this.setState({errorMessage:"Students cannot be viewed"});
       });
 };
+
+sortAllBooks = (allBookDetails, categoriesCountMap) => {
+    var sortedGenres = [];
+    for (var genre in categoriesCountMap) {
+        sortedGenres.push([genre, categoriesCountMap[genre]]);
+    }
+
+    sortedGenres.sort(function(a, b) {
+        return b[1] - a[1];
+    });
+
+    var tempBookDetails = [];
+
+    sortedGenres.forEach(genre => {
+        allBookDetails.forEach(detail => {
+            if(detail.genre === genre[0]) {
+                tempBookDetails.push(detail);
+            }
+        });
+    });
+    return tempBookDetails;
+}
 
 swapCheck = () => {
     let userId=localStorage.getItem("user_id");
