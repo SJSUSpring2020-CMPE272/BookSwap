@@ -38,6 +38,7 @@ class Dashboard extends Component {
             books:[],
             booksList:[],
             categories:[],
+            sortedGenres:[],
             categorisedBooks: [],
             unCategorisedBooks: [],
             authorsList: [],
@@ -50,9 +51,7 @@ class Dashboard extends Component {
         this.closeMeetingLocations = this.closeMeetingLocations.bind(this);
     }  
     componentDidMount() {
-      this.searchBook(null);
-      this.getBooksList();
-      this.swapCheck();
+      this.getSwapHistory();
   }
   closeModal() {
     this.setState({
@@ -60,9 +59,58 @@ class Dashboard extends Component {
     });
   }
 
+getSwapHistory = () => {
+  let data = { userid: localStorage.getItem("user_id") }
+
+  axios.post(backendURI + '/requests/getswaphistory', data)
+      .then(response => {
+         
+          if (response.status === 200) {
+            let categoriesCountMap = {};
+              let swapBookDetails = response.data;
+              swapBookDetails.forEach(detail => {
+                if(detail.genre in categoriesCountMap) {
+                    categoriesCountMap[detail.genre] = categoriesCountMap[detail.genre] + 1;
+                } else {
+                    categoriesCountMap[detail.genre] = 1;
+                }
+            });
+
+              // console.log("categoriesCountMap before sort: " + JSON.stringify(categoriesCountMap));
+
+          var sortedGenres = [];
+          for (var genre in categoriesCountMap) {
+              sortedGenres.push([genre, categoriesCountMap[genre]]);
+          }
+
+          sortedGenres.sort(function(a, b) {
+              return b[1] - a[1];
+          });
+
+          var tempBookDetails = [];
+
+          sortedGenres.forEach(genre => {
+              tempBookDetails.push(genre[0]);
+          });
+
+
+          this.setState({ sortedGenres : tempBookDetails });
+
+          this.searchBook(null);
+          this.getBooksList();
+          this.swapCheck();
+
+            }
+          })
+            .catch(err => {
+                this.setState({ errorMessage: "swapHistory cannot be viewed" });
+            });
+};
+
 getBooksList = () => {
     let userId=localStorage.getItem("user_id");
-    const data={userId : userId}
+    // console.log("getBooksList " + this.state.sortedGenres)
+    const data={userId : userId, sortedOreder: this.state.sortedGenres}
       axios.post(backendURI +'/book/getSwapBookAllUsers',data)
       .then(response => {
           if(response.status === 200){
@@ -268,10 +316,12 @@ messageContentHandler=(e)=>
             message : e.target.value
         })
     }
+
   getSwapBookAllUsers =()=>
   {
     let userId=localStorage.getItem("user_id");
-    const data={userId : userId}
+    // console.log(" getSwapBookAllUsers " + this.state.sortedGenres)
+    const data={userId : userId,sortedOreder: this.state.sortedGenres}
       axios.post(backendURI +'/book/getSwapBookAllUsers',data)
       .then(response => {
           if(response.status === 200){
@@ -385,6 +435,7 @@ pageCountDec=async()=>{
 }
 this.searchBook(null);
 }
+
 searchBook=(searchString)=>
 {
     if(searchString == null){
@@ -392,10 +443,12 @@ searchBook=(searchString)=>
     }
     
     let userId=localStorage.getItem("user_id");
+    // console.log("searchBook " + this.state.sortedGenres)
     let data = {
         searchString: searchString,
         pageIndex:this.state.pageIndex,
-        userId : userId
+        userId : userId,
+        sortedOreder: this.state.sortedGenres
     }
     console.log(data);
     axios.post(backendURI +'/book/searchBook',data)
