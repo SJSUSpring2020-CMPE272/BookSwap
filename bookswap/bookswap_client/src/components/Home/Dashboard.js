@@ -31,7 +31,7 @@ class Dashboard extends Component {
         super();
         this.state = {  
             allBookDetails : [],
-            allBooksInRange : [],
+            allBookDetailsInit : [],
             bookIsOpen:false,
             openMessage:false,
             isMeetingLocationModalOpen: false,
@@ -92,13 +92,15 @@ filterByDistance=(book)=>{
 
      dist=this.distance(localStorage.getItem("userLat"),localStorage.getItem("userLon"),
                            book.location.latitude,book.location.longitude );
-                           console.log("distance of book"+book.bookName+":" + dist);
-                           return dist<= this.state.range;
-   
-
-    
+     console.log("distance of book"+book.bookName+":" + dist);
+     return dist<= this.state.range;
 }
 
+handleApply=()=>{
+    let allBookDetails= this.state.allBookDetailsInit;
+                let distanceFilteredBooks= allBookDetails.filter(this.filterByDistance);
+                this.setState({allBookDetails:distanceFilteredBooks});
+  }
 
   // filtering by distance
 
@@ -158,6 +160,10 @@ getBooksList = () => {
       .then(response => {
           if(response.status === 200){
               let allBookDetails=response.data;
+              this.setState({
+                allBookDetailsInit: allBookDetails
+                 
+            }); 
               let distanceFilteredBooks= allBookDetails.filter(this.filterByDistance);
               allBookDetails=distanceFilteredBooks;
               let books = [];
@@ -371,6 +377,10 @@ messageContentHandler=(e)=>
       .then(response => {
           if(response.status === 200){
               let allBookDetails=response.data;
+              this.setState({
+                allBookDetailsInit: allBookDetails
+                 
+            }); 
               let distanceFilteredBooks= allBookDetails.filter(this.filterByDistance);
               allBookDetails = distanceFilteredBooks;
               this.setState({
@@ -501,6 +511,10 @@ searchBook=(searchString)=>
     .then(response => {
         if(response.status === 200){
             let allBookDetails=response.data;
+            this.setState({
+                allBookDetailsInit: allBookDetails
+                 
+            }); 
             let distanceFilteredBooks= allBookDetails.filter(this.filterByDistance);
             allBookDetails = distanceFilteredBooks;
             this.setState({
@@ -624,7 +638,7 @@ searchBook=(searchString)=>
 
          }}
       />
-      <Button onClick={() => this.searchBook(this.state.searchString)}>Apply</Button>
+      <Button onClick={() => this.handleApply()}>Apply</Button>
                                         </div>
                                     </div>
                                 </div>

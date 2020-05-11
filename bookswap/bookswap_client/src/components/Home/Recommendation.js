@@ -3,7 +3,7 @@ import '../../App.css';
 import axios from 'axios';
 import {Redirect} from 'react-router';
 import bookdummy from '../../common/books.png';
-
+import RangeSlider from "react-input-slider";
 import Modal from 'react-modal';
 import { Button } from 'react-bootstrap';
 import {backendURI} from '../../common/config';
@@ -16,6 +16,8 @@ class Recommendation extends Component {
            searchString:'alchemist',
           bookTitle:'',
           allBookDetails:[],
+          allBookDetailsInit:[],
+          range: 15,
           unavailableModal:false
         };
         this.closeModal = this.closeModal.bind(this);
@@ -23,6 +25,49 @@ class Recommendation extends Component {
     componentDidMount() {
       this.getRecommendation();
   }
+  // filtering by distance
+ distance=(lat1, lon1, lat2, lon2)=>{
+  console.log("distance called on "+lat1+","+lon1+","+lat2+","+lon2+",");
+  if ((lat1 == lat2) && (lon1 == lon2)) {
+      return 0;
+   }
+  else {
+      var radlat1 = Math.PI * lat1/180;
+      var radlat2 = Math.PI * lat2/180;
+      var theta = lon1-lon2;
+      console.log();
+      var radtheta = Math.PI * theta/180;
+      var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+      if (dist > 1) {
+          dist = 1;
+      }
+      dist = Math.acos(dist);
+      dist = dist * 180/Math.PI;
+      dist = dist * 60 * 1.1515;
+      return dist;
+  }
+}
+
+filterByDistance=(book)=>{
+ let dist=0;
+ let range= this.state.range;
+ console.log("range captured"+range );
+ console.log("filter by dist called on book" +book.bookName);
+
+   dist=this.distance(localStorage.getItem("userLat"),localStorage.getItem("userLon"),
+                         book.location.latitude,book.location.longitude );
+    console.log("distance of book"+book.bookName+":" + dist);
+    return dist<= this.state.range;
+}
+
+handleApply=()=>{
+  let allBookDetails= this.state.allBookDetailsInit;
+              let distanceFilteredBooks= allBookDetails.filter(this.filterByDistance);
+              this.setState({allBookDetails:distanceFilteredBooks});
+}
+
+// filtering by distance
+
   getRecommendation=()=>
 {
   this.setState({
@@ -88,6 +133,13 @@ console.log(data)
       if(response.status === 200){
         console.log(response.data.length)
           let allBookDetails=response.data[0];
+          this.setState({
+            allBookDetailsInit: allBookDetails
+             
+        }); 
+
+          let distanceFilteredBooks= allBookDetails.filter(this.filterByDistance);
+              allBookDetails=distanceFilteredBooks;
           console.log(JSON.stringify(allBookDetails))
           this.setState({
               allBookDetails,
@@ -180,6 +232,20 @@ console.log(data)
                 <div style={{display: "flex",justifyContent: "center",alignItems: "center"}}>
                     <button class="btn btn-primary" type="button" onClick={this.getRecommendation}><span class="glyphicon glyphicon-search"></span>Search</button>
                 </div>
+                <div>
+                                                <p>Show books in: {this.state.range} mi.</p>
+                                        <RangeSlider
+        axis="x"
+        x={this.state.range}
+        xmin = {0}
+        xmax ={50}
+       onChange={({ x }) => {
+            this.setState({range: x });
+
+         }}
+      />
+      <Button onClick={() => this.handleApply()}>Apply</Button>
+                                        </div>
             </div>
         </div>
 	</div>
