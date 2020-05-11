@@ -71,8 +71,10 @@ Books.find({}, (err, books) => {
    res.message = "No such book exists";
  }
  else {
-let filteredBooks = books.filter(book => book.bookOwnerId!=req.body.userId)
-console.log(JSON.stringify(filteredBooks))
+let filteredBooks = books.filter(book => book.bookOwnerId!=req.body.userId);
+// console.log("BEFORE " + JSON.stringify(filteredBooks));
+filteredBooks = sortBooksbasedOnGenres(filteredBooks, req.body["sortedOreder"]);
+// console.log("AFTER " + JSON.stringify(filteredBooks));
 let payload = JSON.stringify(filteredBooks);
 res.status(200).end(payload);   
            }
@@ -94,8 +96,11 @@ router.post("/searchBook", async (req, res) => {
    else {
     const startIndex=(req.body.pageIndex-1)*5;
     const endIndex=req.body.pageIndex*5;
-  let filteredBooks = books.filter(book => book.bookOwnerId!=req.body.userId).slice(startIndex,endIndex);
-  console.log(JSON.stringify(filteredBooks))
+  let filteredBooks = books.filter(book => book.bookOwnerId!=req.body.userId);
+  // console.log("BEFORE " + JSON.stringify(filteredBooks));
+  filteredBooks = sortBooksbasedOnGenres(filteredBooks, req.body["sortedOreder"]);
+  // console.log("AFTER " + JSON.stringify(filteredBooks));
+  filteredBooks = filteredBooks.slice(startIndex,endIndex);
   let payload = JSON.stringify(filteredBooks);
   res.status(200).end(payload);   
              }
@@ -116,7 +121,11 @@ else{
      console.log("SEARCH"+req.body.searchString)
     const startIndex=(req.body.pageIndex-1)*5;
     const endIndex=req.body.pageIndex*5;
-    filteredBooks = books.filter(book => book.bookOwnerId!=req.body.userId && (book.bookName.toLowerCase().includes(req.body.searchString.toLowerCase())||book.genre.toLowerCase().includes(req.body.searchString.toLowerCase())||book.authorName.toLowerCase().includes(req.body.searchString.toLowerCase()))).slice(startIndex,endIndex);
+    filteredBooks = books.filter(book => book.bookOwnerId!=req.body.userId && (book.bookName.toLowerCase().includes(req.body.searchString.toLowerCase())||book.genre.toLowerCase().includes(req.body.searchString.toLowerCase())||book.authorName.toLowerCase().includes(req.body.searchString.toLowerCase())));
+    // console.log("BEFORE " + JSON.stringify(filteredBooks));
+    filteredBooks = sortBooksbasedOnGenres(filteredBooks, req.body["sortedOreder"]);
+    filteredBooks = filteredBooks.slice;
+    // console.log("AFTER " + JSON.stringify(filteredBooks));
   let payload = JSON.stringify(filteredBooks);
   res.status(200).end(payload);   
              }
@@ -161,4 +170,24 @@ else{
         
       })
   })
+
+function sortBooksbasedOnGenres(booksJson, genreOrder) {
+    var result = []
+
+    genreOrder.forEach(genre => {
+      booksJson.forEach(bookJson => {
+        if(bookJson["genre"] === genre) {
+          result.push(bookJson);
+        }
+      });
+    });
+
+    booksJson.forEach(bookJson => {
+      if(!result.includes(bookJson)) {
+        result.push(bookJson);
+      }
+    });
+
+    return result;
+}
 module.exports = router;
