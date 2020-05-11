@@ -30,7 +30,7 @@ class Recommendation extends Component {
     booksLength :0
  }); 
     
-    axios.get(`https://cors-anywhere.herokuapp.com/https://14645873.ngrok.io/predictions/${this.state.searchString}`)
+    axios.get(`https://cors-anywhere.herokuapp.com/https://12314e5e.ngrok.io/predictions/${this.state.searchString}`)
     .then(response => {
         if(response.status === 200){
           var result = response.data;
