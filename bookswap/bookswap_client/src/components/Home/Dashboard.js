@@ -11,7 +11,8 @@ import bookdummy from '../../common/books.png';
 import {backendURI} from '../../common/config';
 import Modal from 'react-modal';
 import { Button, Form} from "react-bootstrap";
-
+import RangeSlider from "react-input-slider";
+ 
 import { CarouselProvider, Slider, Slide } from 'pure-react-carousel';
 import 'pure-react-carousel/dist/react-carousel.es.css';
 
@@ -30,6 +31,7 @@ class Dashboard extends Component {
         super();
         this.state = {  
             allBookDetails : [],
+            allBooksInRange : [],
             bookIsOpen:false,
             openMessage:false,
             isMeetingLocationModalOpen: false,
@@ -42,6 +44,7 @@ class Dashboard extends Component {
             unCategorisedBooks: [],
             authorsList: [],
             dropdownList: [],
+            range:15,
             selectedOption: 'book'
         }
         this.closeModal = this.closeModal.bind(this);
@@ -59,6 +62,46 @@ class Dashboard extends Component {
         bookIsOpen: false
     });
   }
+  // filtering by distance
+ distance=(lat1, lon1, lat2, lon2)=>{
+    console.log("distance called on "+lat1+","+lon1+","+lat2+","+lon2+",");
+    if ((lat1 == lat2) && (lon1 == lon2)) {
+        return 0;
+     }
+    else {
+        var radlat1 = Math.PI * lat1/180;
+        var radlat2 = Math.PI * lat2/180;
+        var theta = lon1-lon2;
+        console.log();
+        var radtheta = Math.PI * theta/180;
+        var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+        if (dist > 1) {
+            dist = 1;
+        }
+        dist = Math.acos(dist);
+        dist = dist * 180/Math.PI;
+        dist = dist * 60 * 1.1515;
+        return dist;
+    }
+}
+
+filterByDistance=(book)=>{
+   let dist=0;
+   let range= this.state.range;
+   console.log("range captured"+range );
+   console.log("filter by dist called on book" +book.bookName);
+
+     dist=this.distance(localStorage.getItem("userLat"),localStorage.getItem("userLon"),
+                           book.location.latitude,book.location.longitude );
+                           console.log("distance of book"+book.bookName+":" + dist);
+                           return dist<= this.state.range;
+   
+
+    
+}
+
+
+  // filtering by distance
 
 getBooksList = () => {
     let userId=localStorage.getItem("user_id");
@@ -67,6 +110,8 @@ getBooksList = () => {
       .then(response => {
           if(response.status === 200){
               let allBookDetails=response.data;
+              let distanceFilteredBooks= allBookDetails.filter(this.filterByDistance);
+              allBookDetails=distanceFilteredBooks;
               let books = [];
               let categories = [];
               let authors = [];
@@ -276,7 +321,8 @@ messageContentHandler=(e)=>
       .then(response => {
           if(response.status === 200){
               let allBookDetails=response.data;
-              
+              let distanceFilteredBooks= allBookDetails.filter(this.filterByDistance);
+              allBookDetails = distanceFilteredBooks;
               this.setState({
                   allBookDetails   
               });
@@ -402,6 +448,8 @@ searchBook=(searchString)=>
     .then(response => {
         if(response.status === 200){
             let allBookDetails=response.data;
+            let distanceFilteredBooks= allBookDetails.filter(this.filterByDistance);
+            allBookDetails = distanceFilteredBooks;
             this.setState({
                 allBookDetails   
             }); 
@@ -510,6 +558,20 @@ searchBook=(searchString)=>
                                         </div>
                                         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", padding: "10px 0px 0px 0px" }}>
                                             <button class="btn btn-primary" type="button" onClick={() => this.searchBook(null)}><span class="glyphicon glyphicon-search"></span>Search</button>
+                                        </div>
+                                        <div>
+                                                <p>Show books in: {this.state.range} mi.</p>
+                                        <RangeSlider
+        axis="x"
+        x={this.state.range}
+        xmin = {0}
+        xmax ={50}
+       onChange={({ x }) => {
+            this.setState({range: x });
+
+         }}
+      />
+      <Button onClick={() => this.searchBook(this.state.searchString)}>Apply</Button>
                                         </div>
                                     </div>
                                 </div>
