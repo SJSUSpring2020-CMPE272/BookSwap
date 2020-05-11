@@ -124,7 +124,7 @@ else{
     filteredBooks = books.filter(book => book.bookOwnerId!=req.body.userId && (book.bookName.toLowerCase().includes(req.body.searchString.toLowerCase())||book.genre.toLowerCase().includes(req.body.searchString.toLowerCase())||book.authorName.toLowerCase().includes(req.body.searchString.toLowerCase())));
     // console.log("BEFORE " + JSON.stringify(filteredBooks));
     filteredBooks = sortBooksbasedOnGenres(filteredBooks, req.body["sortedOreder"]);
-    filteredBooks = filteredBooks.slice;
+    filteredBooks = filteredBooks.slice(startIndex,endIndex);
     // console.log("AFTER " + JSON.stringify(filteredBooks));
   let payload = JSON.stringify(filteredBooks);
   res.status(200).end(payload);   
