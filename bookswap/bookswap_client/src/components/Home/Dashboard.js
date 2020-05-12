@@ -61,46 +61,7 @@ class Dashboard extends Component {
         bookIsOpen: false
     });
   }
-  // filtering by distance
- distance=(lat1, lon1, lat2, lon2)=>{
-    console.log("distance called on "+lat1+","+lon1+","+lat2+","+lon2+",");
-    if ((lat1 == lat2) && (lon1 == lon2)) {
-        return 0;
-     }
-    else {
-        var radlat1 = Math.PI * lat1/180;
-        var radlat2 = Math.PI * lat2/180;
-        var theta = lon1-lon2;
-        console.log();
-        var radtheta = Math.PI * theta/180;
-        var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
-        if (dist > 1) {
-            dist = 1;
-        }
-        dist = Math.acos(dist);
-        dist = dist * 180/Math.PI;
-        dist = dist * 60 * 1.1515;
-        return dist;
-    }
-}
-
-filterByDistance=(book)=>{
-   let dist=0;
-   let range= this.state.range;
-   console.log("range captured"+range );
-   console.log("filter by dist called on book" +book.bookName);
-
-     dist=this.distance(localStorage.getItem("userLat"),localStorage.getItem("userLon"),
-                           book.location.latitude,book.location.longitude );
-                           console.log("distance of book"+book.bookName+":" + dist);
-                           return dist<= this.state.range;
-   
-
-    
-}
-
-
-  // filtering by distance
+  
 
 getSwapHistory = () => {
   let data = { userid: localStorage.getItem("user_id") }
@@ -153,13 +114,12 @@ getSwapHistory = () => {
 getBooksList = () => {
     let userId=localStorage.getItem("user_id");
     // console.log("getBooksList " + this.state.sortedGenres)
-    const data={userId : userId, sortedOreder: this.state.sortedGenres}
+    const data={userId : userId, sortedOreder: this.state.sortedGenres , userLat:localStorage.getItem("userLat"),range: this.state.range,userLon:localStorage.getItem("userLon")}
       axios.post(backendURI +'/book/getSwapBookAllUsers',data)
       .then(response => {
           if(response.status === 200){
               let allBookDetails=response.data;
-              let distanceFilteredBooks= allBookDetails.filter(this.filterByDistance);
-              allBookDetails=distanceFilteredBooks;
+              
               let books = [];
               let categories = [];
               let authors = [];
@@ -366,16 +326,16 @@ messageContentHandler=(e)=>
   {
     let userId=localStorage.getItem("user_id");
     // console.log(" getSwapBookAllUsers " + this.state.sortedGenres)
-    const data={userId : userId,sortedOreder: this.state.sortedGenres}
+    const data={userId : userId,sortedOreder: this.state.sortedGenres, userLat:localStorage.getItem("userLat"),userLon:localStorage.getItem("userLon"),range: this.state.range}
       axios.post(backendURI +'/book/getSwapBookAllUsers',data)
       .then(response => {
           if(response.status === 200){
               let allBookDetails=response.data;
-              let distanceFilteredBooks= allBookDetails.filter(this.filterByDistance);
-              allBookDetails = distanceFilteredBooks;
+              
               this.setState({
                   allBookDetails   
               });
+              console.log("filtered books:"+this.state.allBookDetails.bookName);
               
           }
       })
@@ -494,15 +454,16 @@ searchBook=(searchString)=>
         searchString: searchString,
         pageIndex:this.state.pageIndex,
         userId : userId,
-        sortedOreder: this.state.sortedGenres
+        sortedOreder: this.state.sortedGenres,
+        userLat:localStorage.getItem("userLat"),userLon:localStorage.getItem("userLon"),
+        range: this.state.range
     }
     console.log(data);
     axios.post(backendURI +'/book/searchBook',data)
     .then(response => {
         if(response.status === 200){
             let allBookDetails=response.data;
-            let distanceFilteredBooks= allBookDetails.filter(this.filterByDistance);
-            allBookDetails = distanceFilteredBooks;
+            
             this.setState({
                 allBookDetails   
             }); 
