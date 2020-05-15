@@ -8,7 +8,8 @@ import collections
 from IPython import display
 import sklearn
 import sklearn.manifold
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behaviour()
 
 app = Flask(__name__)
 pd.set_option('display.max_rows', None)
